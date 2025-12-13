@@ -1,41 +1,37 @@
-export type Department = 'IT' | 'HR' | 'Finance' | 'Production' | 'Warehouse' | 'Other';
+import { Request } from 'express';
+import { Role } from '@prisma/client';
 
-export type Urgency = 'low' | 'medium' | 'high';
-
-export type Status = 'pending' | 'in_progress' | 'completed';
-
-export interface MaintenanceRequest {
-  id: string;
-  requesterName: string;
-  department: Department;
-  equipment: string;
-  imageUrl?: string;
-  description: string;
-  urgency: Urgency;
-  status: Status;
-  assignedTechnician?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  completedAt?: Date;
+export interface JwtPayload {
+  userId: string;
+  role: Role;
 }
 
-export interface CreateRequestDTO {
-  requesterName: string;
-  department: Department;
-  equipment: string;
-  imageUrl?: string;
-  description: string;
-  urgency: Urgency;
+export interface AuthRequest extends Request {
+  user?: JwtPayload;
 }
 
-export interface UpdateRequestDTO {
-  status?: Status;
-  assignedTechnician?: string;
+export interface ApiResponse<T = unknown> {
+  success: boolean;
+  data?: T;
+  message?: string;
+  error?: {
+    code: string;
+    message: string;
+    details?: unknown;
+  };
 }
 
-export interface KPIMetrics {
-  totalRequests: number;
-  pendingRequests: number;
-  inProgressRequests: number;
-  averageCompletionTime: number;
+export interface PaginationParams {
+  page: number;
+  limit: number;
+}
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
 }

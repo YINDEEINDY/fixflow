@@ -1,0 +1,200 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model categories {
+  id         String     @id
+  name       String     @unique
+  name_th    String
+  icon       String?
+  color      String?
+  is_active  Boolean    @default(true)
+  sort_order Int        @default(0)
+  created_at DateTime   @default(now())
+  requests   requests[]
+}
+
+model job_notes {
+  id                 String      @id
+  request_id         String
+  technician_id      String
+  note               String
+  photos             String[]    @default([])
+  materials          Json?
+  time_spent_minutes Int?
+  created_at         DateTime    @default(now())
+  requests           requests    @relation(fields: [request_id], references: [id], onDelete: Cascade)
+  technicians        technicians @relation(fields: [technician_id], references: [id])
+}
+
+model locations {
+  id          String     @id
+  building    String
+  floor       String?
+  room        String?
+  description String?
+  is_active   Boolean    @default(true)
+  created_at  DateTime   @default(now())
+  requests    requests[]
+}
+
+model notifications {
+  id         String   @id
+  user_id    String
+  type       String
+  title      String
+  message    String
+  link       String?
+  is_read    Boolean  @default(false)
+  created_at DateTime @default(now())
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([created_at(sort: Desc)])
+  @@index([user_id])
+  @@index([user_id, is_read])
+}
+
+model ratings {
+  id         String   @id
+  request_id String   @unique
+  user_id    String
+  score      Int
+  comment    String?
+  created_at DateTime @default(now())
+  requests   requests @relation(fields: [request_id], references: [id], onDelete: Cascade)
+  users      users    @relation(fields: [user_id], references: [id])
+}
+
+model refresh_tokens {
+  id         String   @id
+  token      String   @unique
+  user_id    String
+  expires_at DateTime
+  created_at DateTime @default(now())
+
+  @@index([expires_at])
+  @@index([user_id])
+}
+
+model request_logs {
+  id         String   @id
+  request_id String
+  action     String
+  old_status String?
+  new_status String?
+  note       String?
+  created_by String
+  created_at DateTime @default(now())
+  users      users    @relation(fields: [created_by], references: [id])
+  requests   requests @relation(fields: [request_id], references: [id], onDelete: Cascade)
+
+  @@index([created_at(sort: Desc)])
+  @@index([request_id])
+}
+
+model requests {
+  id             String         @id
+  request_number String         @unique
+  user_id        String
+  technician_id  String?
+  category_id    String
+  location_id    String
+  title          String
+  description    String?
+  photos         String[]       @default([])
+  priority       Priority       @default(normal)
+  status         RequestStatus  @default(pending)
+  preferred_date DateTime?      @db.Date
+  preferred_time String?
+  assigned_at    DateTime?
+  started_at     DateTime?
+  completed_at   DateTime?
+  created_at     DateTime       @default(now())
+  updated_at     DateTime
+  deleted_at     DateTime?
+  job_notes      job_notes[]
+  ratings        ratings?
+  request_logs   request_logs[]
+  categories     categories     @relation(fields: [category_id], references: [id])
+  locations      locations      @relation(fields: [location_id], references: [id])
+  technicians    technicians?   @relation(fields: [technician_id], references: [id])
+  users          users          @relation(fields: [user_id], references: [id])
+
+  @@index([category_id])
+  @@index([created_at(sort: Desc)])
+  @@index([location_id])
+  @@index([priority])
+  @@index([status])
+  @@index([technician_id])
+  @@index([user_id])
+}
+
+model system_settings {
+  id         String   @id
+  key        String   @unique
+  value      String
+  created_at DateTime @default(now())
+  updated_at DateTime
+}
+
+model technicians {
+  id               String      @id
+  user_id          String      @unique
+  specialty        String[]    @default([])
+  is_available     Boolean     @default(true)
+  max_jobs_per_day Int         @default(5)
+  created_at       DateTime    @default(now())
+  rating           Float?      @default(0)
+  job_notes        job_notes[]
+  requests         requests[]
+  users            users       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model users {
+  id                String          @id
+  email             String?         @unique
+  password_hash     String?
+  name              String
+  role              Role            @default(user)
+  line_id           String?         @unique
+  line_access_token String?
+  avatar_url        String?
+  phone             String?
+  department        String?
+  is_active         Boolean         @default(true)
+  created_at        DateTime        @default(now())
+  updated_at        DateTime
+  notifications     notifications[]
+  ratings           ratings[]
+  request_logs      request_logs[]
+  requests          requests[]
+  technicians       technicians?
+}
+
+enum Priority {
+  low
+  normal
+  high
+  urgent
+}
+
+enum RequestStatus {
+  pending
+  assigned
+  accepted
+  in_progress
+  on_hold
+  completed
+  cancelled
+  rejected
+}
+
+enum Role {
+  user
+  technician
+  admin
+}

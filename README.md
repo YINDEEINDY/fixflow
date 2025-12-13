@@ -1,119 +1,106 @@
-# FixFlow - Maintenance Request Management System
+# FixFlow - ระบบแจ้งซ่อม/บำรุงรักษา
 
-A full-stack web application for managing maintenance requests in educational institutions or organizations.
+ระบบแจ้งซ่อม/บำรุงรักษาออนไลน์ที่ช่วยให้องค์กร สถานศึกษา และหน่วยงานต่างๆ สามารถจัดการงานซ่อมบำรุงได้อย่างมีประสิทธิภาพ
 
 ## Features
 
-- **User Management**: Role-based access (Admin, Technician, User)
-- **Request Management**: Create, track, and manage maintenance requests
-- **Status Workflow**: Pending → Accepted → In Progress → Completed (or Rejected/Cancelled)
-- **Discord Integration**:
-  - Webhook notifications for status updates
-  - Bot integration for automatic channel creation per request
-- **Dashboard**: Statistics and analytics for admins
+- **User**: แจ้งซ่อม, ติดตามสถานะ, ให้คะแนน
+- **Technician**: รับงาน, อัปเดตสถานะ, บันทึกการซ่อม
+- **Admin**: จัดการผู้ใช้, มอบหมายงาน, ดูรายงาน
+- **Notifications**: แจ้งเตือนผ่าน LINE และ In-app
+- **Real-time**: อัปเดตสถานะแบบ real-time
 
 ## Tech Stack
 
 ### Frontend
 - React 18 + TypeScript
-- Vite
-- Tailwind CSS
-- Zustand (state management)
-- Lucide React (icons)
+- Vite 5
+- Tailwind CSS 3
+- React Router 6
+- TanStack Query
+- Zustand
 
 ### Backend
 - Node.js + Express
 - TypeScript
 - Prisma ORM
-- PostgreSQL (Railway)
+- PostgreSQL
 - JWT Authentication
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js 18+ (LTS)
-- PostgreSQL database
-- Discord Webhook URL (optional)
+- Node.js 20+
+- PostgreSQL database (or use Railway/Supabase)
 
 ### Installation
 
-1. Clone the repository
+1. Clone repository
 ```bash
-git clone https://github.com/YINDEEINDY/fixflow.git
+git clone <repo-url>
 cd fixflow
 ```
 
-2. Install dependencies
+2. Setup Server
 ```bash
-# Backend
 cd server
+cp .env.example .env
+# Edit .env with your database credentials
 npm install
-
-# Frontend
-cd ../client
-npm install
+npm run db:generate
+npm run db:push
+npm run db:seed
+npm run dev
 ```
 
-3. Setup environment variables
+3. Setup Client
 ```bash
-# server/.env
+cd client
+cp .env.example .env
+npm install
+npm run dev
+```
+
+### Environment Variables
+
+#### Server (.env)
+```
 DATABASE_URL="postgresql://..."
 JWT_SECRET="your-secret-key"
 JWT_REFRESH_SECRET="your-refresh-secret"
+LINE_CHANNEL_ID=""
+LINE_CHANNEL_SECRET=""
 ```
 
-4. Run database migrations
-```bash
-cd server
-npx prisma migrate dev
+#### Client (.env)
+```
+VITE_API_URL=http://localhost:3001/api
+VITE_LINE_CHANNEL_ID=
 ```
 
-5. Seed initial data (optional)
-```bash
-npx prisma db seed
-```
+## Test Accounts
 
-6. Start development servers
-```bash
-# Terminal 1 - Backend
-cd server && npm run dev
-
-# Terminal 2 - Frontend
-cd client && npm run dev
-```
-
-## Default Accounts (after seeding)
-
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | admin@fixflow.com | admin123 |
-| Technician | tech@fixflow.com | tech123 |
-| User | user@fixflow.com | user123 |
+After running seed:
+- **Admin**: admin@fixflow.com / admin123
+- **Technician**: tech@fixflow.com / tech123
+- **User**: user@fixflow.com / user123
 
 ## API Endpoints
 
 ### Authentication
-- `POST /api/auth/login` - Login
 - `POST /api/auth/register` - Register
+- `POST /api/auth/login` - Login
+- `POST /api/auth/line` - LINE Login
 - `POST /api/auth/refresh` - Refresh token
 - `POST /api/auth/logout` - Logout
+- `GET /api/auth/me` - Get current user
 
-### Requests
-- `GET /api/requests` - Get all requests
+### Requests (Coming soon)
+- `GET /api/requests` - List requests
 - `POST /api/requests` - Create request
-- `GET /api/requests/:id` - Get request by ID
+- `GET /api/requests/:id` - Get request detail
 - `PUT /api/requests/:id` - Update request
-- `POST /api/requests/:id/accept` - Accept request
-- `POST /api/requests/:id/reject` - Reject request
-- `POST /api/requests/:id/cancel` - Cancel request
-- `POST /api/requests/:id/start` - Start work
-- `POST /api/requests/:id/complete` - Complete request
-
-### Settings (Admin only)
-- `GET /api/settings` - Get settings
-- `PUT /api/settings` - Update settings
-- `POST /api/settings/test-discord` - Test Discord webhook
-- `POST /api/settings/test-discord-bot` - Test Discord bot
+- `DELETE /api/requests/:id` - Cancel request
 
 ## License
 
