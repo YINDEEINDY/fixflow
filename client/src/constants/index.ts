@@ -1,0 +1,91 @@
+export const THAI_TEXT = {
+  company: {
+    name: 'EEC PROGRAMMER',
+    subtitle: 'ระบบแจ้งซ่อมบำรุง',
+  },
+  requester: {
+    pageTitle: 'แบบฟอร์มแจ้งซ่อม',
+    formTitle: 'แจ้งปัญหาการซ่อมบำรุง',
+    nameLabel: 'ชื่อผู้แจ้ง',
+    namePlaceholder: 'กรุณากรอกชื่อของคุณ',
+    departmentLabel: 'ตำแหน่ง/แผนก',
+    departmentPlaceholder: 'เลือกแผนก',
+    equipmentLabel: 'อุปกรณ์/พื้นที่',
+    equipmentPlaceholder: 'เช่น คอมพิวเตอร์ห้อง A101',
+    imageLabel: 'รูปภาพประกอบ',
+    descriptionLabel: 'รายละเอียดปัญหา',
+    descriptionPlaceholder: 'โปรดอธิบายปัญหาที่พบโดยละเอียด',
+    urgencyLabel: 'ความเร่งด่วน',
+    submitButton: 'ส่งคำขอ',
+    successMessage: 'ส่งคำขอสำเร็จ! รหัสงาน: ',
+    errorMessage: 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง',
+    statusTrackerTitle: 'ติดตามสถานะงานซ่อม',
+    noRequests: 'ยังไม่มีคำขอซ่อม',
+  },
+  admin: {
+    loginTitle: 'เข้าสู่ระบบ',
+    username: 'ชื่อผู้ใช้',
+    password: 'รหัสผ่าน',
+    loginButton: 'เข้าสู่ระบบ',
+    logoutButton: 'ออกจากระบบ',
+    loginError: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',
+    dashboardTitle: 'แดชบอร์ดผู้ดูแลระบบ',
+    totalRequests: 'งานทั้งหมด',
+    pendingRequests: 'รอรับงาน',
+    inProgressRequests: 'กำลังดำเนินการ',
+    averageTime: 'เวลาเฉลี่ย',
+    acceptButton: 'รับงาน',
+    assignButton: 'มอบหมาย',
+    statusButton: 'เปลี่ยนสถานะ',
+    filterTitle: 'ตัวกรอง',
+    clearFilters: 'ล้างตัวกรอง',
+    searchPlaceholder: 'ค้นหา...',
+  },
+  department: {
+    IT: 'ไอที',
+    HR: 'ทรัพยากรบุคคล',
+    Finance: 'การเงิน',
+    Production: 'การผลิต',
+    Warehouse: 'คลังสินค้า',
+    Other: 'อื่นๆ',
+  },
+  urgency: {
+    low: 'ต่ำ',
+    medium: 'ปานกลาง',
+    high: 'สูง',
+  },
+  status: {
+    pending: 'รอรับงาน',
+    in_progress: 'กำลังดำเนินการ',
+    completed: 'เสร็จสิ้น',
+  },
+  table: {
+    id: 'รหัสงาน',
+    date: 'วันที่แจ้ง',
+    requester: 'ผู้แจ้ง',
+    department: 'แผนก',
+    equipment: 'อุปกรณ์',
+    description: 'รายละเอียด',
+    urgency: 'ความเร่งด่วน',
+    status: 'สถานะ',
+    assignedTo: 'ช่างผู้รับผิดชอบ',
+    actions: 'การดำเนินการ',
+  },
+  validation: {
+    required: 'กรุณากรอกข้อมูล',
+    minLength: 'ข้อมูลต้องมีอย่างน้อย {{count}} ตัวอักษร',
+    maxLength: 'ข้อมูลต้องไม่เกิน {{count}} ตัวอักษร',
+    invalidFile: 'ไฟล์ไม่ถูกต้อง',
+    fileTooLarge: 'ไฟล์มีขนาดเกิน 5MB',
+    invalidImageType: 'รองรับเฉพาะไฟล์รูปภาพ',
+  },
+} as const;
+
+export const DEPARTMENTS = ['IT', 'HR', 'Finance', 'Production', 'Warehouse', 'Other'] as const;
+export const URGENCY_LEVELS = ['low', 'medium', 'high'] as const;
+export const STATUS_OPTIONS = ['pending', 'in_progress', 'completed'] as const;
+
+export const ADMIN_CREDENTIALS = {
+  username: 'TTT',
+  password: '666',
+} as const;
