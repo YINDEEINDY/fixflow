@@ -1,5 +1,7 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import { env } from '../config/env.js';
+
+const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 
 interface EmailOptions {
   to: string;
@@ -7,33 +9,26 @@ interface EmailOptions {
   html: string;
 }
 
-const transporter = env.SMTP_HOST
-  ? nodemailer.createTransport({
-      host: env.SMTP_HOST,
-      port: parseInt(env.SMTP_PORT || '587', 10),
-      secure: env.SMTP_PORT === '465',
-      auth: {
-        user: env.SMTP_USER,
-        pass: env.SMTP_PASS,
-      },
-    })
-  : null;
-
 export async function sendEmail(options: EmailOptions): Promise<boolean> {
-  if (!transporter) {
-    console.log('[Email Service] SMTP not configured. Email would be sent to:', options.to);
+  if (!resend) {
+    console.log('[Email Service] Resend not configured. Email would be sent to:', options.to);
     console.log('[Email Service] Subject:', options.subject);
-    console.log('[Email Service] Content:', options.html);
-    return true; // Return true for development without SMTP
+    return true;
   }
 
   try {
-    await transporter.sendMail({
-      from: env.SMTP_FROM || env.SMTP_USER,
+    const { error } = await resend.emails.send({
+      from: env.EMAIL_FROM || 'FixFlow <onboarding@resend.dev>',
       to: options.to,
       subject: options.subject,
       html: options.html,
     });
+
+    if (error) {
+      console.error('[Email Service] Failed to send email:', error);
+      return false;
+    }
+
     console.log('[Email Service] Email sent successfully to:', options.to);
     return true;
   } catch (error) {
