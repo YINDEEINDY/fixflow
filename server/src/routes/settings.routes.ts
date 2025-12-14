@@ -13,5 +13,7 @@ router.put('/', settingsController.updateSettings);
 router.post('/test-discord', settingsController.testDiscord);
 router.post('/test-discord-bot', settingsController.testDiscordBot);
 router.get('/discord-channels', settingsController.getDiscordChannels);
+router.post('/test-line-bot', settingsController.testLineBot);
+router.post('/test-all-notifications', settingsController.testAllNotifications);
 
 export default router;

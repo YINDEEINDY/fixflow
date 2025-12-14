@@ -30,4 +30,29 @@ router.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// LINE Bot Webhook - to capture Group ID
+router.post('/line/webhook', (req, res) => {
+  console.log('=== LINE Webhook Event ===');
+  console.log(JSON.stringify(req.body, null, 2));
+
+  const events = req.body.events || [];
+  for (const event of events) {
+    if (event.source?.groupId) {
+      console.log('');
+      console.log('========================================');
+      console.log('GROUP ID FOUND:', event.source.groupId);
+      console.log('========================================');
+      console.log('');
+    }
+    if (event.source?.roomId) {
+      console.log('ROOM ID FOUND:', event.source.roomId);
+    }
+    if (event.source?.userId) {
+      console.log('USER ID:', event.source.userId);
+    }
+  }
+
+  res.status(200).json({ status: 'ok' });
+});
+
 export default router;

@@ -3,6 +3,8 @@ import { AuthRequest } from '../types/index.js';
 import * as settingsService from '../services/settings.service.js';
 import * as discordNotify from '../services/discord-notify.service.js';
 import * as discordBot from '../services/discord-bot.service.js';
+import * as lineBotService from '../services/line-bot.service.js';
+import * as notifyDispatcher from '../services/notify-dispatcher.service.js';
 
 export async function getSettings(_req: AuthRequest, res: Response) {
   try {
@@ -138,6 +140,48 @@ export async function getDiscordChannels(_req: AuthRequest, res: Response) {
     return res.status(500).json({
       success: false,
       error: { code: 'SERVER_ERROR', message: 'Failed to get Discord channels' },
+    });
+  }
+}
+
+export async function testLineBot(_req: AuthRequest, res: Response) {
+  try {
+    const success = await lineBotService.testLineBotConnection();
+
+    if (!success) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'LINE_BOT_ERROR', message: 'Failed to send LINE Bot notification. Check Channel Access Token and Group ID.' },
+      });
+    }
+
+    return res.json({ success: true, data: { message: 'LINE Bot test notification sent successfully' } });
+  } catch (err) {
+    console.error('Test LINE Bot error:', err);
+    return res.status(500).json({
+      success: false,
+      error: { code: 'SERVER_ERROR', message: 'Failed to test LINE Bot notification' },
+    });
+  }
+}
+
+export async function testAllNotifications(_req: AuthRequest, res: Response) {
+  try {
+    const results = await notifyDispatcher.testAll();
+
+    return res.json({
+      success: true,
+      data: {
+        discord: results.discord,
+        lineBot: results.lineBot,
+        message: `Discord: ${results.discord ? 'OK' : 'Failed'}, LINE Bot: ${results.lineBot ? 'OK' : 'Failed'}`,
+      },
+    });
+  } catch (err) {
+    console.error('Test all notifications error:', err);
+    return res.status(500).json({
+      success: false,
+      error: { code: 'SERVER_ERROR', message: 'Failed to test notifications' },
     });
   }
 }

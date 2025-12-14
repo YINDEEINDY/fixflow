@@ -1,6 +1,6 @@
 import { prisma } from '../config/db.js';
 import { RequestStatus, Priority, Prisma } from '@prisma/client';
-import * as discordNotify from './discord-notify.service.js';
+import * as notifyDispatcher from './notify-dispatcher.service.js';
 
 interface CreateRequestInput {
   userId: string;
@@ -110,18 +110,18 @@ export async function createRequest(input: CreateRequestInput) {
     },
   });
 
-  // Send Discord notification
+  // Send notifications (Discord + LINE Bot)
   const location = request.location;
   const locationStr = `${location.building}${location.floor ? ` ชั้น ${location.floor}` : ''}${location.room ? ` ห้อง ${location.room}` : ''}`;
 
-  discordNotify.notifyNewRequest({
+  notifyDispatcher.notifyNewRequest({
     requestNumber: request.requestNumber,
     title: request.title,
     category: request.category.nameTh,
     location: locationStr,
     priority: request.priority,
     userName: request.user.name,
-  }).catch((err) => console.error('Failed to send Discord notify:', err));
+  }).catch((err) => console.error('Failed to send notification:', err));
 
   return request;
 }
@@ -375,13 +375,13 @@ export async function cancelRequest(id: string, userId: string, reason?: string)
     },
   });
 
-  // Send Discord notification
-  discordNotify.notifyRequestCancelled({
+  // Send notifications (Discord + LINE Bot)
+  notifyDispatcher.notifyRequestCancelled({
     requestNumber: updated.requestNumber,
     title: updated.title,
     userName: updated.user.name,
     reason,
-  }).catch((err) => console.error('Failed to send Discord notify:', err));
+  }).catch((err) => console.error('Failed to send notification:', err));
 
   return updated;
 }
@@ -437,12 +437,12 @@ export async function assignRequest(id: string, technicianId: string, adminId: s
     },
   });
 
-  // Send Discord notification
-  discordNotify.notifyRequestAssigned({
+  // Send notifications (Discord + LINE Bot)
+  notifyDispatcher.notifyRequestAssigned({
     requestNumber: request.requestNumber,
     title: request.title,
     technicianName: updated.technician?.user.name || 'ไม่ระบุ',
-  }).catch((err) => console.error('Failed to send Discord notify:', err));
+  }).catch((err) => console.error('Failed to send notification:', err));
 
   return updated;
 }
@@ -486,12 +486,12 @@ export async function acceptRequest(id: string, technicianUserId: string) {
     },
   });
 
-  // Send Discord notification
-  discordNotify.notifyRequestAccepted({
+  // Send notifications (Discord + LINE Bot)
+  notifyDispatcher.notifyRequestAccepted({
     requestNumber: request.requestNumber,
     title: request.title,
     technicianName: request.technician?.user?.name || 'ไม่ระบุ',
-  }).catch((err) => console.error('Failed to send Discord notify:', err));
+  }).catch((err) => console.error('Failed to send notification:', err));
 
   return updated;
 }
@@ -542,13 +542,13 @@ export async function rejectRequest(id: string, technicianUserId: string, reason
     },
   });
 
-  // Send Discord notification
-  discordNotify.notifyRequestRejected({
+  // Send notifications (Discord + LINE Bot)
+  notifyDispatcher.notifyRequestRejected({
     requestNumber: request.requestNumber,
     title: request.title,
     technicianName,
     reason,
-  }).catch((err) => console.error('Failed to send Discord notify:', err));
+  }).catch((err) => console.error('Failed to send notification:', err));
 
   return updated;
 }
@@ -595,12 +595,12 @@ export async function startRequest(id: string, technicianUserId: string) {
     },
   });
 
-  // Send Discord notification
-  discordNotify.notifyRequestStarted({
+  // Send notifications (Discord + LINE Bot)
+  notifyDispatcher.notifyRequestStarted({
     requestNumber: request.requestNumber,
     title: request.title,
     technicianName: request.technician?.user?.name || 'ไม่ระบุ',
-  }).catch((err) => console.error('Failed to send Discord notify:', err));
+  }).catch((err) => console.error('Failed to send notification:', err));
 
   return updated;
 }
@@ -650,13 +650,13 @@ export async function completeRequest(id: string, technicianUserId: string, note
     },
   });
 
-  // Send Discord notification
-  discordNotify.notifyRequestCompleted({
+  // Send notifications (Discord + LINE Bot)
+  notifyDispatcher.notifyRequestCompleted({
     requestNumber: request.requestNumber,
     title: request.title,
     technicianName: request.technician?.user?.name || 'ไม่ระบุ',
     note,
-  }).catch((err) => console.error('Failed to send Discord notify:', err));
+  }).catch((err) => console.error('Failed to send notification:', err));
 
   return updated;
 }

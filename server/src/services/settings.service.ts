@@ -5,18 +5,24 @@ export interface SystemSettings {
   siteDescription: string;
   contactEmail: string;
   contactPhone: string;
+  // Discord
   discordWebhookUrl: string | null;
   discordBotToken: string | null;
   discordGuildId: string | null;
   discordCategoryId: string | null;
   discordNotifyChannelId: string | null;
   discordEnabled: boolean;
+  // LINE Bot
+  lineBotGroupId: string | null;
+  lineBotEnabled: boolean;
+  // Email
   emailSmtpHost: string | null;
   emailSmtpPort: number | null;
   emailSmtpUser: string | null;
   emailSmtpPassword: string | null;
   emailFrom: string | null;
   emailEnabled: boolean;
+  // System
   maintenanceMode: boolean;
   autoAssignEnabled: boolean;
   defaultPriority: string;
@@ -30,18 +36,24 @@ const DEFAULT_SETTINGS: SystemSettings = {
   siteDescription: 'ระบบแจ้งซ่อมบำรุง',
   contactEmail: '',
   contactPhone: '',
+  // Discord
   discordWebhookUrl: null,
   discordBotToken: null,
   discordGuildId: null,
   discordCategoryId: null,
   discordNotifyChannelId: null,
   discordEnabled: false,
+  // LINE Bot
+  lineBotGroupId: null,
+  lineBotEnabled: false,
+  // Email
   emailSmtpHost: null,
   emailSmtpPort: null,
   emailSmtpUser: null,
   emailSmtpPassword: null,
   emailFrom: null,
   emailEnabled: false,
+  // System
   maintenanceMode: false,
   autoAssignEnabled: false,
   defaultPriority: 'normal',
