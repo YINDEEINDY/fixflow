@@ -13,11 +13,14 @@ import {
   Check,
   Play,
   CheckCircle,
+  Star,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { useRequestStore } from '../stores/request.store';
 import { useAuthStore } from '../stores/auth.store';
+import { ratingApi, type Rating } from '../api/rating';
 
 const statusColors: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -78,14 +81,29 @@ export default function RequestDetail() {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [cancelReason, setCancelReason] = useState('');
   const [rejectReason, setRejectReason] = useState('');
   const [selectedTechnicianId, setSelectedTechnicianId] = useState('');
   const [assignNote, setAssignNote] = useState('');
 
+  // Rating state
+  const [rating, setRating] = useState<Rating | null>(null);
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [ratingScore, setRatingScore] = useState(5);
+  const [ratingComment, setRatingComment] = useState('');
+  const [isSubmittingRating, setIsSubmittingRating] = useState(false);
+
   useEffect(() => {
     if (id) {
       fetchRequestById(id);
+      // Fetch rating
+      ratingApi.getRating(id).then((res) => {
+        if (res.success && res.data) {
+          setRating(res.data);
+        }
+      });
     }
     return () => clearCurrentRequest();
   }, [id, fetchRequestById, clearCurrentRequest]);
@@ -168,6 +186,27 @@ export default function RequestDetail() {
     }
   };
 
+  const handleSubmitRating = async () => {
+    if (!id) return;
+    setIsSubmittingRating(true);
+    try {
+      const res = await ratingApi.createRating(id, ratingScore, ratingComment || undefined);
+      if (res.success && res.data) {
+        setRating(res.data);
+        setShowRatingModal(false);
+      }
+    } catch (error) {
+      console.error('Rating failed:', error);
+    } finally {
+      setIsSubmittingRating(false);
+    }
+  };
+
+  const openImageModal = (index: number) => {
+    setSelectedImageIndex(index);
+    setShowImageModal(true);
+  };
+
   if (isLoading || !currentRequest) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -181,6 +220,7 @@ export default function RequestDetail() {
   const isAdmin = user?.role === 'admin';
   const isTechnician = user?.role === 'technician';
   const isAssignedTechnician = request.technician?.user.id === user?.id;
+  const canRate = isOwner && request.status === 'completed' && !rating;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -253,6 +293,68 @@ export default function RequestDetail() {
               )}
             </CardContent>
           </Card>
+
+          {/* Photos Card */}
+          {request.photos && request.photos.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4" />
+                  รูปภาพประกอบ ({request.photos.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {request.photos.map((photo, index) => (
+                    <div
+                      key={index}
+                      className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
+                      onClick={() => openImageModal(index)}
+                    >
+                      <img
+                        src={photo}
+                        alt={`รูปที่ ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Rating Card */}
+          {rating && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Star className="w-4 h-4 text-yellow-500" />
+                  การให้คะแนน
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-1 mb-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className={`w-6 h-6 ${
+                        star <= rating.score
+                          ? 'text-yellow-400 fill-yellow-400'
+                          : 'text-gray-300'
+                      }`}
+                    />
+                  ))}
+                  <span className="ml-2 text-lg font-medium">{rating.score}/5</span>
+                </div>
+                {rating.comment && (
+                  <p className="text-gray-600 mt-2">{rating.comment}</p>
+                )}
+                <p className="text-xs text-gray-400 mt-2">
+                  ให้คะแนนโดย {rating.user.name} เมื่อ {formatDate(rating.createdAt)}
+                </p>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Timeline Card */}
           <Card>
@@ -437,9 +539,25 @@ export default function RequestDetail() {
                 </>
               )}
 
-              {request.status === 'completed' && (
+              {/* Rating button */}
+              {canRate && (
+                <Button
+                  className="w-full bg-yellow-500 hover:bg-yellow-600"
+                  onClick={() => setShowRatingModal(true)}
+                >
+                  <Star className="w-4 h-4 mr-2" />
+                  ให้คะแนน
+                </Button>
+              )}
+
+              {request.status === 'completed' && !canRate && !rating && (
                 <p className="text-center text-green-600 font-medium">
                   งานเสร็จสิ้นแล้ว
+                </p>
+              )}
+              {request.status === 'completed' && rating && (
+                <p className="text-center text-green-600 font-medium">
+                  ให้คะแนนแล้ว
                 </p>
               )}
               {request.status === 'cancelled' && (
@@ -451,6 +569,41 @@ export default function RequestDetail() {
           </Card>
         </div>
       </div>
+
+      {/* Image Modal */}
+      {showImageModal && request.photos && request.photos.length > 0 && (
+        <div
+          className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowImageModal(false)}
+        >
+          <button
+            className="absolute top-4 right-4 p-2 text-white hover:bg-white/20 rounded-full"
+            onClick={() => setShowImageModal(false)}
+          >
+            <X className="w-6 h-6" />
+          </button>
+          <div className="relative max-w-4xl max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={request.photos[selectedImageIndex]}
+              alt={`รูปที่ ${selectedImageIndex + 1}`}
+              className="max-w-full max-h-[90vh] object-contain"
+            />
+            {request.photos.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                {request.photos.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`w-2 h-2 rounded-full ${
+                      index === selectedImageIndex ? 'bg-white' : 'bg-white/50'
+                    }`}
+                    onClick={() => setSelectedImageIndex(index)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Cancel Modal */}
       {showCancelModal && (
@@ -581,6 +734,84 @@ export default function RequestDetail() {
                   disabled={!rejectReason || isSubmitting}
                 >
                   ปฏิเสธงาน
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Rating Modal */}
+      {showRatingModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Star className="w-5 h-5 text-yellow-500" />
+                ให้คะแนนการบริการ
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  คะแนน
+                </label>
+                <div className="flex items-center justify-center gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setRatingScore(star)}
+                      className="p-1 hover:scale-110 transition-transform"
+                    >
+                      <Star
+                        className={`w-10 h-10 ${
+                          star <= ratingScore
+                            ? 'text-yellow-400 fill-yellow-400'
+                            : 'text-gray-300 hover:text-yellow-200'
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+                <p className="text-center text-sm text-gray-500 mt-1">
+                  {ratingScore === 1 && 'แย่มาก'}
+                  {ratingScore === 2 && 'แย่'}
+                  {ratingScore === 3 && 'ปานกลาง'}
+                  {ratingScore === 4 && 'ดี'}
+                  {ratingScore === 5 && 'ดีมาก'}
+                </p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  ความคิดเห็น (ไม่บังคับ)
+                </label>
+                <textarea
+                  className="w-full border rounded-lg p-2"
+                  rows={3}
+                  placeholder="แสดงความคิดเห็นเพิ่มเติม..."
+                  value={ratingComment}
+                  onChange={(e) => setRatingComment(e.target.value)}
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setShowRatingModal(false)}
+                >
+                  ยกเลิก
+                </Button>
+                <Button
+                  className="flex-1 bg-yellow-500 hover:bg-yellow-600"
+                  onClick={handleSubmitRating}
+                  disabled={isSubmittingRating}
+                >
+                  {isSubmittingRating ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    'ส่งคะแนน'
+                  )}
                 </Button>
               </div>
             </CardContent>

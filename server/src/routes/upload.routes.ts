@@ -1,23 +1,12 @@
 import { Router } from 'express';
 import multer from 'multer';
-import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
 import * as uploadController from '../controllers/upload.controller.js';
 import { authenticate } from '../middlewares/auth.js';
 
 const router = Router();
 
-// Configure multer storage
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    cb(null, path.join(process.cwd(), 'uploads'));
-  },
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    const filename = `${uuidv4()}${ext}`;
-    cb(null, filename);
-  },
-});
+// Use memory storage for Cloudinary uploads
+const storage = multer.memoryStorage();
 
 // File filter for images
 const imageFilter = (_req: Express.Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
