@@ -676,7 +676,7 @@ export async function getLocations() {
 }
 
 export async function getTechnicians() {
-  return prisma.technician.findMany({
+  const technicians = await prisma.technician.findMany({
     where: { isAvailable: true },
     include: {
       user: {
@@ -689,4 +689,6 @@ export async function getTechnicians() {
       },
     },
   });
+  console.log('Found technicians:', technicians.length);
+  return technicians;
 }

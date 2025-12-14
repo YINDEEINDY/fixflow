@@ -81,9 +81,14 @@ export const useRequestStore = create<RequestState>((set, get) => ({
   },
 
   fetchTechnicians: async () => {
-    const response = await requestsApi.getTechnicians();
-    if (response.success && response.data) {
-      set({ technicians: response.data });
+    try {
+      const response = await requestsApi.getTechnicians();
+      console.log('Technicians API response:', response);
+      if (response.success && response.data) {
+        set({ technicians: response.data });
+      }
+    } catch (error) {
+      console.error('Failed to fetch technicians:', error);
     }
   },
 
