@@ -1,7 +1,9 @@
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { prisma } from '../config/db.js';
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken, getRefreshTokenExpiry } from '../utils/jwt.js';
 import { Role } from '@prisma/client';
+import { sendPasswordResetEmail } from './email.service.js';
 
 interface RegisterInput {
   email: string;
@@ -243,4 +245,89 @@ export async function getUser(userId: string) {
   }
 
   return user;
+}
+
+export async function requestPasswordReset(email: string): Promise<boolean> {
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  // Always return true to prevent email enumeration attacks
+  if (!user || !user.isActive) {
+    return true;
+  }
+
+  // Generate a secure random token
+  const token = crypto.randomBytes(32).toString('hex');
+  const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
+
+  // Delete any existing tokens for this user
+  await prisma.passwordResetToken.deleteMany({
+    where: { userId: user.id },
+  });
+
+  // Create new token
+  await prisma.passwordResetToken.create({
+    data: {
+      token,
+      userId: user.id,
+      expiresAt,
+    },
+  });
+
+  // Send email
+  await sendPasswordResetEmail(email, token, user.name);
+
+  return true;
+}
+
+export async function verifyResetToken(token: string): Promise<boolean> {
+  const resetToken = await prisma.passwordResetToken.findUnique({
+    where: { token },
+  });
+
+  if (!resetToken) {
+    return false;
+  }
+
+  if (resetToken.expiresAt < new Date() || resetToken.usedAt) {
+    return false;
+  }
+
+  return true;
+}
+
+export async function resetPassword(token: string, newPassword: string): Promise<boolean> {
+  const resetToken = await prisma.passwordResetToken.findUnique({
+    where: { token },
+    include: { user: true },
+  });
+
+  if (!resetToken) {
+    throw new Error('INVALID_RESET_TOKEN');
+  }
+
+  if (resetToken.expiresAt < new Date() || resetToken.usedAt) {
+    throw new Error('EXPIRED_RESET_TOKEN');
+  }
+
+  const passwordHash = await bcrypt.hash(newPassword, 12);
+
+  // Update password and mark token as used
+  await prisma.$transaction([
+    prisma.user.update({
+      where: { id: resetToken.userId },
+      data: { passwordHash },
+    }),
+    prisma.passwordResetToken.update({
+      where: { id: resetToken.id },
+      data: { usedAt: new Date() },
+    }),
+    // Also invalidate all refresh tokens for security
+    prisma.refreshToken.deleteMany({
+      where: { userId: resetToken.userId },
+    }),
+  ]);
+
+  return true;
 }

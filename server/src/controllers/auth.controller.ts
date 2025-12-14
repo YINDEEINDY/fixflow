@@ -224,3 +224,76 @@ export async function me(req: AuthRequest, res: Response): Promise<void> {
     throw error;
   }
 }
+
+const forgotPasswordSchema = z.object({
+  email: z.string().email('Invalid email format'),
+});
+
+export async function forgotPassword(req: Request, res: Response): Promise<void> {
+  try {
+    const { email } = forgotPasswordSchema.parse(req.body);
+    await authService.requestPasswordReset(email);
+
+    // Always return success to prevent email enumeration
+    sendSuccess(res, { message: 'Password reset email sent if account exists' });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      sendError(res, 'VALIDATION_ERROR', 'Invalid email format', 400);
+      return;
+    }
+    throw error;
+  }
+}
+
+const verifyResetTokenSchema = z.object({
+  token: z.string().min(1, 'Token is required'),
+});
+
+export async function verifyResetToken(req: Request, res: Response): Promise<void> {
+  try {
+    const { token } = verifyResetTokenSchema.parse(req.body);
+    const isValid = await authService.verifyResetToken(token);
+    sendSuccess(res, { valid: isValid });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      sendError(res, 'VALIDATION_ERROR', 'Token is required', 400);
+      return;
+    }
+    throw error;
+  }
+}
+
+const resetPasswordSchema = z.object({
+  token: z.string().min(1, 'Token is required'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+});
+
+export async function resetPassword(req: Request, res: Response): Promise<void> {
+  try {
+    const { token, password } = resetPasswordSchema.parse(req.body);
+    await authService.resetPassword(token, password);
+    sendSuccess(res, { message: 'Password reset successfully' });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const details = error.issues.map((e) => ({
+        field: e.path.join('.'),
+        message: e.message,
+      }));
+      sendError(res, 'VALIDATION_ERROR', 'Validation failed', 400, details);
+      return;
+    }
+
+    if (error instanceof Error) {
+      if (error.message === 'INVALID_RESET_TOKEN') {
+        sendError(res, 'INVALID_RESET_TOKEN', 'Invalid reset token', 400);
+        return;
+      }
+      if (error.message === 'EXPIRED_RESET_TOKEN') {
+        sendError(res, 'EXPIRED_RESET_TOKEN', 'Reset token has expired', 400);
+        return;
+      }
+    }
+
+    throw error;
+  }
+}

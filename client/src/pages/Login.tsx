@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Wrench, Mail, Lock, MessageCircle } from 'lucide-react';
+import { Wrench, Mail, Lock } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
@@ -44,16 +44,6 @@ export default function Login() {
     }
   };
 
-  const handleLineLogin = () => {
-    const lineChannelId = import.meta.env.VITE_LINE_CHANNEL_ID;
-    const redirectUri = encodeURIComponent(
-      `${window.location.origin}/auth/line/callback`
-    );
-    const state = Math.random().toString(36).substring(7);
-
-    window.location.href = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${lineChannelId}&redirect_uri=${redirectUri}&state=${state}&scope=profile%20openid%20email`;
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -71,27 +61,6 @@ export default function Login() {
             <CardTitle className="text-center">เข้าสู่ระบบ</CardTitle>
           </CardHeader>
           <CardContent>
-            {/* LINE Login Button */}
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full mb-6 bg-[#00B900] hover:bg-[#00A000] text-white border-[#00B900]"
-              onClick={handleLineLogin}
-            >
-              <MessageCircle className="w-5 h-5 mr-2" />
-              เข้าสู่ระบบด้วย LINE
-            </Button>
-
-            <div className="relative mb-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white text-gray-500">หรือ</span>
-              </div>
-            </div>
-
-            {/* Email Login Form */}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {error && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
@@ -130,6 +99,12 @@ export default function Login() {
               </Button>
             </form>
 
+            <div className="mt-4 text-center">
+              <Link to="/forgot-password" className="text-sm text-primary-600 hover:text-primary-500">
+                ลืมรหัสผ่าน?
+              </Link>
+            </div>
+
             <p className="mt-6 text-center text-sm text-gray-600">
               ยังไม่มีบัญชี?{' '}
               <Link to="/register" className="text-primary-600 hover:text-primary-500 font-medium">
@@ -138,14 +113,6 @@ export default function Login() {
             </p>
           </CardContent>
         </Card>
-
-        {/* Demo accounts */}
-        <div className="mt-6 p-4 bg-white/50 rounded-lg text-sm text-gray-600">
-          <p className="font-medium mb-2">บัญชีทดสอบ:</p>
-          <p>Admin: admin@fixflow.com / admin123</p>
-          <p>Tech: tech@fixflow.com / tech123</p>
-          <p>User: user@fixflow.com / user123</p>
-        </div>
       </div>
     </div>
   );
