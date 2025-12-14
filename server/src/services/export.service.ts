@@ -13,6 +13,14 @@ const THAI_FONT_BOLD = path.join(FONT_PATH, 'Sarabun-Bold.ttf');
 // Check if Thai fonts are available
 const hasThaiFonts = fs.existsSync(THAI_FONT_REGULAR) && fs.existsSync(THAI_FONT_BOLD);
 
+// Debug logging for production
+console.log('[Export Service] Font configuration:');
+console.log('  - CWD:', process.cwd());
+console.log('  - FONT_PATH:', FONT_PATH);
+console.log('  - hasThaiFonts:', hasThaiFonts);
+console.log('  - Regular font exists:', fs.existsSync(THAI_FONT_REGULAR));
+console.log('  - Bold font exists:', fs.existsSync(THAI_FONT_BOLD));
+
 interface ExportFilters {
   status?: RequestStatus;
   priority?: Priority;
@@ -139,29 +147,40 @@ export async function exportToExcel(filters: ExportFilters): Promise<Buffer> {
 }
 
 export async function exportToPdf(filters: ExportFilters): Promise<Buffer> {
+  console.log('[Export PDF] Starting PDF export...');
   const requests = await getRequestsForExport(filters);
+  console.log('[Export PDF] Fetched', requests.length, 'requests');
 
   return new Promise((resolve, reject) => {
-    const doc = new PDFDocument({
-      size: 'A4',
-      layout: 'landscape',
-      margin: 30,
-    });
+    try {
+      const doc = new PDFDocument({
+        size: 'A4',
+        layout: 'landscape',
+        margin: 30,
+      });
 
-    const chunks: Buffer[] = [];
-    doc.on('data', (chunk: Buffer) => chunks.push(chunk));
-    doc.on('end', () => resolve(Buffer.concat(chunks)));
-    doc.on('error', reject);
+      const chunks: Buffer[] = [];
+      doc.on('data', (chunk: Buffer) => chunks.push(chunk));
+      doc.on('end', () => {
+        console.log('[Export PDF] PDF generation complete');
+        resolve(Buffer.concat(chunks));
+      });
+      doc.on('error', (err) => {
+        console.error('[Export PDF] PDF error:', err);
+        reject(err);
+      });
 
-    // Define font names based on availability
-    const fontRegular = hasThaiFonts ? 'Thai' : 'Helvetica';
-    const fontBold = hasThaiFonts ? 'Thai-Bold' : 'Helvetica-Bold';
+      // Define font names based on availability
+      const fontRegular = hasThaiFonts ? 'Thai' : 'Helvetica';
+      const fontBold = hasThaiFonts ? 'Thai-Bold' : 'Helvetica-Bold';
+      console.log('[Export PDF] Using fonts:', { fontRegular, fontBold, hasThaiFonts });
 
-    // Register Thai fonts if available
-    if (hasThaiFonts) {
-    doc.registerFont('Thai', THAI_FONT_REGULAR);
-    doc.registerFont('Thai-Bold', THAI_FONT_BOLD);
-    }
+      // Register Thai fonts if available
+      if (hasThaiFonts) {
+        doc.registerFont('Thai', THAI_FONT_REGULAR);
+        doc.registerFont('Thai-Bold', THAI_FONT_BOLD);
+        console.log('[Export PDF] Thai fonts registered');
+      }
 
     // Title
     doc.font(fontBold).fontSize(18).text('รายงานการแจ้งซ่อม FixFlow', { align: 'center' });
@@ -228,7 +247,11 @@ export async function exportToPdf(filters: ExportFilters): Promise<Buffer> {
       y += 15;
     });
 
-    doc.end();
+      doc.end();
+    } catch (err) {
+      console.error('[Export PDF] Caught error:', err);
+      reject(err);
+    }
   });
 }
 
