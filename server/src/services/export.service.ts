@@ -1,7 +1,18 @@
 import ExcelJS from 'exceljs';
 import PDFDocument from 'pdfkit';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { prisma } from '../config/db.js';
 import { RequestStatus, Priority } from '@prisma/client';
+
+// Get directory path for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Thai font paths
+const FONT_PATH = path.join(__dirname, '../../assets/fonts');
+const THAI_FONT_REGULAR = path.join(FONT_PATH, 'Sarabun-Regular.ttf');
+const THAI_FONT_BOLD = path.join(FONT_PATH, 'Sarabun-Bold.ttf');
 
 interface ExportFilters {
   status?: RequestStatus;
@@ -143,13 +154,14 @@ export async function exportToPdf(filters: ExportFilters): Promise<Buffer> {
     doc.on('end', () => resolve(Buffer.concat(chunks)));
     doc.on('error', reject);
 
-    // Register Thai font (using default for now - would need Thai font file)
-    // doc.registerFont('Thai', 'path/to/thai-font.ttf');
+    // Register Thai fonts
+    doc.registerFont('Thai', THAI_FONT_REGULAR);
+    doc.registerFont('Thai-Bold', THAI_FONT_BOLD);
 
     // Title
-    doc.fontSize(18).text('รายงานการแจ้งซ่อม FixFlow', { align: 'center' });
+    doc.font('Thai-Bold').fontSize(18).text('รายงานการแจ้งซ่อม FixFlow', { align: 'center' });
     doc.moveDown();
-    doc.fontSize(10).text(`สร้างเมื่อ: ${new Date().toLocaleDateString('th-TH')}`, { align: 'right' });
+    doc.font('Thai').fontSize(10).text(`สร้างเมื่อ: ${new Date().toLocaleDateString('th-TH')}`, { align: 'right' });
     doc.moveDown();
 
     // Summary
@@ -158,8 +170,8 @@ export async function exportToPdf(filters: ExportFilters): Promise<Buffer> {
       return acc;
     }, {} as Record<string, number>);
 
-    doc.fontSize(12).text('สรุป:');
-    doc.fontSize(10);
+    doc.font('Thai-Bold').fontSize(12).text('สรุป:');
+    doc.font('Thai').fontSize(10);
     doc.text(`- รายการทั้งหมด: ${requests.length}`);
     Object.entries(statusCounts).forEach(([status, count]) => {
       doc.text(`- ${statusLabels[status] || status}: ${count}`);
@@ -172,14 +184,14 @@ export async function exportToPdf(filters: ExportFilters): Promise<Buffer> {
     const headers = ['เลขที่', 'วันที่', 'หัวข้อ', 'หมวด', 'สถานที่', 'ผู้แจ้ง', 'ช่าง', 'สถานะ'];
 
     let x = 30;
-    doc.font('Helvetica-Bold').fontSize(9);
+    doc.font('Thai-Bold').fontSize(9);
     headers.forEach((header, i) => {
       doc.text(header, x, tableTop, { width: colWidths[i], align: 'left' });
       x += colWidths[i];
     });
 
     // Table rows
-    doc.font('Helvetica').fontSize(8);
+    doc.font('Thai').fontSize(8);
     let y = tableTop + 20;
 
     requests.forEach((request) => {
