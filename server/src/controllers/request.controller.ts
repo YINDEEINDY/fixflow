@@ -104,14 +104,24 @@ export async function getMyRequests(req: AuthRequest, res: Response) {
 export async function getRequestById(req: AuthRequest, res: Response) {
   try {
     const { id } = req.params;
-    const request = await requestService.getRequestById(id);
+    const userId = req.user!.userId;
+    const userRole = req.user!.role;
+    const request = await requestService.getRequestById(id, userId, userRole);
     return res.json({ success: true, data: request });
   } catch (error) {
-    if (error instanceof Error && error.message === 'REQUEST_NOT_FOUND') {
-      return res.status(404).json({
-        success: false,
-        error: { code: 'NOT_FOUND', message: 'Request not found' },
-      });
+    if (error instanceof Error) {
+      if (error.message === 'REQUEST_NOT_FOUND') {
+        return res.status(404).json({
+          success: false,
+          error: { code: 'NOT_FOUND', message: 'Request not found' },
+        });
+      }
+      if (error.message === 'FORBIDDEN') {
+        return res.status(403).json({
+          success: false,
+          error: { code: 'FORBIDDEN', message: 'You do not have permission to view this request' },
+        });
+      }
     }
     console.error('Get request error:', error);
     return res.status(500).json({

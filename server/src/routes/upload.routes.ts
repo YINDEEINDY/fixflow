@@ -1,5 +1,5 @@
-import { Router } from 'express';
-import multer from 'multer';
+import { Router, Request, Response, NextFunction } from 'express';
+import multer, { MulterError } from 'multer';
 import * as uploadController from '../controllers/upload.controller.js';
 import { authenticate } from '../middlewares/auth.js';
 
@@ -14,7 +14,7 @@ const imageFilter = (_req: Express.Request, file: Express.Multer.File, cb: multe
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Only image files are allowed (jpeg, png, gif, webp)'));
+    cb(new Error('INVALID_FILE_TYPE'));
   }
 };
 
@@ -23,17 +23,73 @@ const upload = multer({
   fileFilter: imageFilter,
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB max file size
+    files: 10, // Max 10 files per request
   },
 });
+
+// Error handler for multer errors
+const handleMulterError = (err: Error, _req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'FILE_TOO_LARGE',
+          message: 'File size exceeds 5MB limit',
+        },
+      });
+    }
+    if (err.code === 'LIMIT_FILE_COUNT') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'TOO_MANY_FILES',
+          message: 'Maximum 10 files allowed per upload',
+        },
+      });
+    }
+    if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'UNEXPECTED_FILE',
+          message: 'Unexpected file field',
+        },
+      });
+    }
+  }
+
+  if (err.message === 'INVALID_FILE_TYPE') {
+    return res.status(400).json({
+      success: false,
+      error: {
+        code: 'INVALID_FILE_TYPE',
+        message: 'Only image files are allowed (jpeg, png, gif, webp)',
+      },
+    });
+  }
+
+  next(err);
+};
 
 // All upload routes require authentication
 router.use(authenticate);
 
-// Single image upload
-router.post('/image', upload.single('image'), uploadController.uploadImage);
+// Single image upload with error handling
+router.post('/image', (req, res, next) => {
+  upload.single('image')(req, res, (err) => {
+    if (err) return handleMulterError(err, req, res, next);
+    next();
+  });
+}, uploadController.uploadImage);
 
-// Multiple images upload (max 10)
-router.post('/images', upload.array('images', 10), uploadController.uploadMultipleImages);
+// Multiple images upload with error handling
+router.post('/images', (req, res, next) => {
+  upload.array('images', 10)(req, res, (err) => {
+    if (err) return handleMulterError(err, req, res, next);
+    next();
+  });
+}, uploadController.uploadMultipleImages);
 
 // Delete file
 router.delete('/:filename', uploadController.deleteFile);

@@ -203,7 +203,11 @@ export async function getRequests(params: ListRequestsParams) {
   };
 }
 
-export async function getRequestById(id: string) {
+export async function getRequestById(
+  id: string,
+  userId: string,
+  userRole: string
+) {
   const request = await prisma.request.findUnique({
     where: { id },
     include: {
@@ -263,6 +267,15 @@ export async function getRequestById(id: string) {
 
   if (!request || request.deletedAt) {
     throw new Error('REQUEST_NOT_FOUND');
+  }
+
+  // Authorization check
+  const isOwner = request.userId === userId;
+  const isAssignedTechnician = request.technician?.userId === userId;
+  const isAdmin = userRole === 'admin';
+
+  if (!isOwner && !isAssignedTechnician && !isAdmin) {
+    throw new Error('FORBIDDEN');
   }
 
   return request;
