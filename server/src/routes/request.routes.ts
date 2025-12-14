@@ -11,6 +11,10 @@ router.get('/locations', requestController.getLocations);
 // Protected routes - require authentication
 router.use(authenticate);
 
+// Admin routes (must be before /:id to avoid route conflicts)
+router.get('/', authorize('admin'), requestController.getRequests);
+router.get('/technicians', authorize('admin'), requestController.getTechnicians);
+
 // User routes
 router.post('/', requestController.createRequest);
 router.get('/my', requestController.getMyRequests);
@@ -18,9 +22,7 @@ router.get('/:id', requestController.getRequestById);
 router.put('/:id', requestController.updateRequest);
 router.post('/:id/cancel', requestController.cancelRequest);
 
-// Admin routes
-router.get('/', authorize('admin'), requestController.getRequests);
-router.get('/technicians', authorize('admin'), requestController.getTechnicians);
+// Admin action routes
 router.post('/:id/assign', authorize('admin'), requestController.assignRequest);
 
 // Technician routes
