@@ -6,10 +6,10 @@ import { prisma } from '../config/db.js';
 import { RequestStatus, Priority } from '@prisma/client';
 
 
-// Thai font paths
+// Thai font paths (using Noto Sans Thai for full character support)
 const FONT_PATH = path.join(process.cwd(), 'assets/fonts');
-const THAI_FONT_REGULAR = path.join(FONT_PATH, 'Sarabun-Regular.ttf');
-const THAI_FONT_BOLD = path.join(FONT_PATH, 'Sarabun-Bold.ttf');
+const THAI_FONT_REGULAR = path.join(FONT_PATH, 'NotoSansThai-Regular.ttf');
+const THAI_FONT_BOLD = path.join(FONT_PATH, 'NotoSansThai-Bold.ttf');
 // Check if Thai fonts are available
 const hasThaiFonts = fs.existsSync(THAI_FONT_REGULAR) && fs.existsSync(THAI_FONT_BOLD);
 
