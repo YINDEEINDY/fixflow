@@ -38,6 +38,14 @@ app.use(cookieParser());
 // Serve static files from uploads directory
 app.use('/uploads', express.static(uploadsDir));
 
+// Health check (before routes - no auth required)
+app.get('/health', (_req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Routes
 app.use('/api', routes);
 
