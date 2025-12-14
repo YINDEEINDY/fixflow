@@ -6,20 +6,23 @@ import { prisma } from '../config/db.js';
 import { RequestStatus, Priority } from '@prisma/client';
 
 
-// Thai font paths (using Noto Sans Thai for full character support)
+// Font paths - using Noto Sans (Latin+numbers) and Noto Sans Thai
 const FONT_PATH = path.join(process.cwd(), 'assets/fonts');
+const LATIN_FONT_REGULAR = path.join(FONT_PATH, 'NotoSans-Regular.ttf');
+const LATIN_FONT_BOLD = path.join(FONT_PATH, 'NotoSans-Bold.ttf');
 const THAI_FONT_REGULAR = path.join(FONT_PATH, 'NotoSansThai-Regular.ttf');
 const THAI_FONT_BOLD = path.join(FONT_PATH, 'NotoSansThai-Bold.ttf');
-// Check if Thai fonts are available
+
+// Check if fonts are available
+const hasLatinFonts = fs.existsSync(LATIN_FONT_REGULAR) && fs.existsSync(LATIN_FONT_BOLD);
 const hasThaiFonts = fs.existsSync(THAI_FONT_REGULAR) && fs.existsSync(THAI_FONT_BOLD);
 
 // Debug logging for production
 console.log('[Export Service] Font configuration:');
 console.log('  - CWD:', process.cwd());
 console.log('  - FONT_PATH:', FONT_PATH);
+console.log('  - hasLatinFonts:', hasLatinFonts);
 console.log('  - hasThaiFonts:', hasThaiFonts);
-console.log('  - Regular font exists:', fs.existsSync(THAI_FONT_REGULAR));
-console.log('  - Bold font exists:', fs.existsSync(THAI_FONT_BOLD));
 
 interface ExportFilters {
   status?: RequestStatus;
@@ -170,17 +173,24 @@ export async function exportToPdf(filters: ExportFilters): Promise<Buffer> {
         reject(err);
       });
 
-      // Define font names based on availability
-      const fontRegular = hasThaiFonts ? 'Thai' : 'Helvetica';
-      const fontBold = hasThaiFonts ? 'Thai-Bold' : 'Helvetica-Bold';
-      console.log('[Export PDF] Using fonts:', { fontRegular, fontBold, hasThaiFonts });
-
-      // Register Thai fonts if available
+      // Register fonts based on availability
+      // Use Latin fonts for numbers/English, Thai fonts for Thai text
+      if (hasLatinFonts) {
+        doc.registerFont('Latin', LATIN_FONT_REGULAR);
+        doc.registerFont('Latin-Bold', LATIN_FONT_BOLD);
+        console.log('[Export PDF] Latin fonts registered');
+      }
       if (hasThaiFonts) {
         doc.registerFont('Thai', THAI_FONT_REGULAR);
         doc.registerFont('Thai-Bold', THAI_FONT_BOLD);
         console.log('[Export PDF] Thai fonts registered');
       }
+
+      // For mixed content, we use Latin fonts (which have numbers)
+      // Thai characters will show as boxes but numbers will work
+      const fontRegular = hasLatinFonts ? 'Latin' : 'Helvetica';
+      const fontBold = hasLatinFonts ? 'Latin-Bold' : 'Helvetica-Bold';
+      console.log('[Export PDF] Using fonts:', { fontRegular, fontBold, hasLatinFonts, hasThaiFonts });
 
     // Title
     doc.font(fontBold).fontSize(18).text('รายงานการแจ้งซ่อม FixFlow', { align: 'center' });
