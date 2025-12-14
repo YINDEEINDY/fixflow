@@ -27,12 +27,12 @@ export async function register(req: Request, res: Response): Promise<void> {
     const input = registerSchema.parse(req.body);
     const result = await authService.register(input);
 
-    // Set refresh token as HTTP-only cookie
+    // Set refresh token as HTTP-only cookie (7 days)
     res.cookie('refreshToken', result.refreshToken, {
       httpOnly: true,
       secure: env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     sendSuccess(res, {
@@ -61,13 +61,17 @@ export async function register(req: Request, res: Response): Promise<void> {
 export async function login(req: Request, res: Response): Promise<void> {
   try {
     const input = loginSchema.parse(req.body);
+    const rememberMe = req.body.rememberMe === true;
     const result = await authService.login(input);
+
+    // Remember me: 30 days, otherwise 7 days
+    const maxAge = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000;
 
     res.cookie('refreshToken', result.refreshToken, {
       httpOnly: true,
       secure: env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge,
     });
 
     sendSuccess(res, {
@@ -152,7 +156,7 @@ export async function lineLogin(req: Request, res: Response): Promise<void> {
     res.cookie('refreshToken', result.refreshToken, {
       httpOnly: true,
       secure: env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 

@@ -21,6 +21,7 @@ export default function Login() {
   const { login } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const {
     register,
@@ -35,7 +36,7 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      await login(data.email, data.password);
+      await login(data.email, data.password, rememberMe);
       navigate('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'เข้าสู่ระบบไม่สำเร็จ');
@@ -92,6 +93,19 @@ export default function Login() {
                     error={errors.password?.message}
                   />
                 </div>
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  id="rememberMe"
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                />
+                <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700">
+                  จดจำฉันไว้
+                </label>
               </div>
 
               <Button type="submit" className="w-full" isLoading={isLoading}>
