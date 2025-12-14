@@ -45,7 +45,7 @@ app.use(errorHandler);
 // Start server
 const PORT = parseInt(env.PORT, 10);
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`
   ╔═══════════════════════════════════════════╗
   ║     FixFlow Server Started Successfully    ║
