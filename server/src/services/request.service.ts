@@ -231,7 +231,7 @@ export async function getRequestById(id: string) {
           },
         },
       },
-      logs: {
+      requestLogs: {
         include: {
           user: {
             select: {
@@ -242,7 +242,7 @@ export async function getRequestById(id: string) {
         },
         orderBy: { createdAt: 'desc' },
       },
-      notes: {
+      jobNotes: {
         include: {
           technician: {
             include: {

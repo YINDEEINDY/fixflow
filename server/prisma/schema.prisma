@@ -6,173 +6,191 @@ datasource db {
   provider = "postgresql"
 }
 
-model categories {
-  id         String     @id
-  name       String     @unique
-  name_th    String
-  icon       String?
-  color      String?
-  is_active  Boolean    @default(true)
-  sort_order Int        @default(0)
-  created_at DateTime   @default(now())
-  requests   requests[]
+model Category {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  nameTh    String    @map("name_th")
+  icon      String?
+  color     String?
+  isActive  Boolean   @default(true) @map("is_active")
+  sortOrder Int       @default(0) @map("sort_order")
+  createdAt DateTime  @default(now()) @map("created_at")
+  requests  Request[]
+
+  @@map("categories")
 }
 
-model job_notes {
-  id                 String      @id
-  request_id         String
-  technician_id      String
-  note               String
-  photos             String[]    @default([])
-  materials          Json?
-  time_spent_minutes Int?
-  created_at         DateTime    @default(now())
-  requests           requests    @relation(fields: [request_id], references: [id], onDelete: Cascade)
-  technicians        technicians @relation(fields: [technician_id], references: [id])
+model JobNote {
+  id               String     @id @default(uuid())
+  requestId        String     @map("request_id")
+  technicianId     String     @map("technician_id")
+  note             String
+  photos           String[]   @default([])
+  materials        Json?
+  timeSpentMinutes Int?       @map("time_spent_minutes")
+  createdAt        DateTime   @default(now()) @map("created_at")
+  request          Request    @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  technician       Technician @relation(fields: [technicianId], references: [id])
+
+  @@map("job_notes")
 }
 
-model locations {
-  id          String     @id
+model Location {
+  id          String    @id @default(uuid())
   building    String
   floor       String?
   room        String?
   description String?
-  is_active   Boolean    @default(true)
-  created_at  DateTime   @default(now())
-  requests    requests[]
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  requests    Request[]
+
+  @@map("locations")
 }
 
-model notifications {
-  id         String   @id
-  user_id    String
-  type       String
-  title      String
-  message    String
-  link       String?
-  is_read    Boolean  @default(false)
-  created_at DateTime @default(now())
-  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  type      String
+  title     String
+  message   String
+  link      String?
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([created_at(sort: Desc)])
-  @@index([user_id])
-  @@index([user_id, is_read])
+  @@index([createdAt(sort: Desc)])
+  @@index([userId])
+  @@index([userId, isRead])
+  @@map("notifications")
 }
 
-model ratings {
-  id         String   @id
-  request_id String   @unique
-  user_id    String
-  score      Int
-  comment    String?
-  created_at DateTime @default(now())
-  requests   requests @relation(fields: [request_id], references: [id], onDelete: Cascade)
-  users      users    @relation(fields: [user_id], references: [id])
+model Rating {
+  id        String   @id @default(uuid())
+  requestId String   @unique @map("request_id")
+  userId    String   @map("user_id")
+  score     Int
+  comment   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  request   Request  @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("ratings")
 }
 
-model refresh_tokens {
-  id         String   @id
-  token      String   @unique
-  user_id    String
-  expires_at DateTime
-  created_at DateTime @default(now())
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
 
-  @@index([expires_at])
-  @@index([user_id])
+  @@index([expiresAt])
+  @@index([userId])
+  @@map("refresh_tokens")
 }
 
-model request_logs {
-  id         String   @id
-  request_id String
-  action     String
-  old_status String?
-  new_status String?
-  note       String?
-  created_by String
-  created_at DateTime @default(now())
-  users      users    @relation(fields: [created_by], references: [id])
-  requests   requests @relation(fields: [request_id], references: [id], onDelete: Cascade)
+model RequestLog {
+  id        String   @id @default(uuid())
+  requestId String   @map("request_id")
+  action    String
+  oldStatus String?  @map("old_status")
+  newStatus String?  @map("new_status")
+  note      String?
+  createdBy String   @map("created_by")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [createdBy], references: [id])
+  request   Request  @relation(fields: [requestId], references: [id], onDelete: Cascade)
 
-  @@index([created_at(sort: Desc)])
-  @@index([request_id])
+  @@index([createdAt(sort: Desc)])
+  @@index([requestId])
+  @@map("request_logs")
 }
 
-model requests {
-  id             String         @id
-  request_number String         @unique
-  user_id        String
-  technician_id  String?
-  category_id    String
-  location_id    String
-  title          String
-  description    String?
-  photos         String[]       @default([])
-  priority       Priority       @default(normal)
-  status         RequestStatus  @default(pending)
-  preferred_date DateTime?      @db.Date
-  preferred_time String?
-  assigned_at    DateTime?
-  started_at     DateTime?
-  completed_at   DateTime?
-  created_at     DateTime       @default(now())
-  updated_at     DateTime
-  deleted_at     DateTime?
-  job_notes      job_notes[]
-  ratings        ratings?
-  request_logs   request_logs[]
-  categories     categories     @relation(fields: [category_id], references: [id])
-  locations      locations      @relation(fields: [location_id], references: [id])
-  technicians    technicians?   @relation(fields: [technician_id], references: [id])
-  users          users          @relation(fields: [user_id], references: [id])
+model Request {
+  id            String        @id @default(uuid())
+  requestNumber String        @unique @map("request_number")
+  userId        String        @map("user_id")
+  technicianId  String?       @map("technician_id")
+  categoryId    String        @map("category_id")
+  locationId    String        @map("location_id")
+  title         String
+  description   String?
+  photos        String[]      @default([])
+  priority      Priority      @default(normal)
+  status        RequestStatus @default(pending)
+  preferredDate DateTime?     @map("preferred_date") @db.Date
+  preferredTime String?       @map("preferred_time")
+  assignedAt    DateTime?     @map("assigned_at")
+  startedAt     DateTime?     @map("started_at")
+  completedAt   DateTime?     @map("completed_at")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+  deletedAt     DateTime?     @map("deleted_at")
+  jobNotes      JobNote[]
+  rating        Rating?
+  requestLogs   RequestLog[]
+  category      Category      @relation(fields: [categoryId], references: [id])
+  location      Location      @relation(fields: [locationId], references: [id])
+  technician    Technician?   @relation(fields: [technicianId], references: [id])
+  user          User          @relation(fields: [userId], references: [id])
 
-  @@index([category_id])
-  @@index([created_at(sort: Desc)])
-  @@index([location_id])
+  @@index([categoryId])
+  @@index([createdAt(sort: Desc)])
+  @@index([locationId])
   @@index([priority])
   @@index([status])
-  @@index([technician_id])
-  @@index([user_id])
+  @@index([technicianId])
+  @@index([userId])
+  @@map("requests")
 }
 
-model system_settings {
-  id         String   @id
-  key        String   @unique
-  value      String
-  created_at DateTime @default(now())
-  updated_at DateTime
+model SystemSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("system_settings")
 }
 
-model technicians {
-  id               String      @id
-  user_id          String      @unique
-  specialty        String[]    @default([])
-  is_available     Boolean     @default(true)
-  max_jobs_per_day Int         @default(5)
-  created_at       DateTime    @default(now())
-  rating           Float?      @default(0)
-  job_notes        job_notes[]
-  requests         requests[]
-  users            users       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+model Technician {
+  id           String    @id @default(uuid())
+  userId       String    @unique @map("user_id")
+  specialty    String[]  @default([])
+  isAvailable  Boolean   @default(true) @map("is_available")
+  maxJobsPerDay Int      @default(5) @map("max_jobs_per_day")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  rating       Float?    @default(0)
+  jobNotes     JobNote[]
+  requests     Request[]
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("technicians")
 }
 
-model users {
-  id                String          @id
-  email             String?         @unique
-  password_hash     String?
-  name              String
-  role              Role            @default(user)
-  line_id           String?         @unique
-  line_access_token String?
-  avatar_url        String?
-  phone             String?
-  department        String?
-  is_active         Boolean         @default(true)
-  created_at        DateTime        @default(now())
-  updated_at        DateTime
-  notifications     notifications[]
-  ratings           ratings[]
-  request_logs      request_logs[]
-  requests          requests[]
-  technicians       technicians?
+model User {
+  id              String         @id @default(uuid())
+  email           String?        @unique
+  passwordHash    String?        @map("password_hash")
+  name            String
+  role            Role           @default(user)
+  lineId          String?        @unique @map("line_id")
+  lineAccessToken String?        @map("line_access_token")
+  avatarUrl       String?        @map("avatar_url")
+  phone           String?
+  department      String?
+  isActive        Boolean        @default(true) @map("is_active")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  notifications   Notification[]
+  ratings         Rating[]
+  requestLogs     RequestLog[]
+  requests        Request[]
+  technician      Technician?
+
+  @@map("users")
 }
 
 enum Priority {

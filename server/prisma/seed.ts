@@ -12,80 +12,47 @@ async function main() {
   console.log('Seeding database...');
 
   // Create categories
-  const categories = await Promise.all([
-    prisma.category.upsert({
-      where: { name: 'electrical' },
-      update: {},
-      create: { name: 'electrical', nameTh: 'ไฟฟ้า', icon: 'Zap', color: '#F59E0B', sortOrder: 1 },
-    }),
-    prisma.category.upsert({
-      where: { name: 'plumbing' },
-      update: {},
-      create: { name: 'plumbing', nameTh: 'ประปา', icon: 'Droplets', color: '#3B82F6', sortOrder: 2 },
-    }),
-    prisma.category.upsert({
-      where: { name: 'air_conditioning' },
-      update: {},
-      create: { name: 'air_conditioning', nameTh: 'แอร์/เครื่องปรับอากาศ', icon: 'Wind', color: '#06B6D4', sortOrder: 3 },
-    }),
-    prisma.category.upsert({
-      where: { name: 'computer' },
-      update: {},
-      create: { name: 'computer', nameTh: 'คอมพิวเตอร์', icon: 'Monitor', color: '#8B5CF6', sortOrder: 4 },
-    }),
-    prisma.category.upsert({
-      where: { name: 'network' },
-      update: {},
-      create: { name: 'network', nameTh: 'เครือข่าย/Internet', icon: 'Wifi', color: '#10B981', sortOrder: 5 },
-    }),
-    prisma.category.upsert({
-      where: { name: 'furniture' },
-      update: {},
-      create: { name: 'furniture', nameTh: 'เฟอร์นิเจอร์', icon: 'Armchair', color: '#78716C', sortOrder: 6 },
-    }),
-    prisma.category.upsert({
-      where: { name: 'cleaning' },
-      update: {},
-      create: { name: 'cleaning', nameTh: 'ความสะอาด', icon: 'Sparkles', color: '#EC4899', sortOrder: 7 },
-    }),
-    prisma.category.upsert({
-      where: { name: 'other' },
-      update: {},
-      create: { name: 'other', nameTh: 'อื่นๆ', icon: 'HelpCircle', color: '#6B7280', sortOrder: 8 },
-    }),
-  ]);
+  const categoriesData = [
+    { name: 'electrical', nameTh: 'ไฟฟ้า', icon: 'Zap', color: '#F59E0B', sortOrder: 1 },
+    { name: 'plumbing', nameTh: 'ประปา', icon: 'Droplets', color: '#3B82F6', sortOrder: 2 },
+    { name: 'air_conditioning', nameTh: 'แอร์/เครื่องปรับอากาศ', icon: 'Wind', color: '#06B6D4', sortOrder: 3 },
+    { name: 'computer', nameTh: 'คอมพิวเตอร์', icon: 'Monitor', color: '#8B5CF6', sortOrder: 4 },
+    { name: 'network', nameTh: 'เครือข่าย/Internet', icon: 'Wifi', color: '#10B981', sortOrder: 5 },
+    { name: 'furniture', nameTh: 'เฟอร์นิเจอร์', icon: 'Armchair', color: '#78716C', sortOrder: 6 },
+    { name: 'cleaning', nameTh: 'ความสะอาด', icon: 'Sparkles', color: '#EC4899', sortOrder: 7 },
+    { name: 'other', nameTh: 'อื่นๆ', icon: 'HelpCircle', color: '#6B7280', sortOrder: 8 },
+  ];
 
-  console.log(`Created ${categories.length} categories`);
+  for (const cat of categoriesData) {
+    await prisma.category.upsert({
+      where: { name: cat.name },
+      update: {},
+      create: cat,
+    });
+  }
+  console.log(`Created ${categoriesData.length} categories`);
 
   // Create locations
-  const locations = await Promise.all([
-    prisma.location.create({
-      data: { building: 'อาคาร A', floor: '1', room: 'ห้อง 101' },
-    }),
-    prisma.location.create({
-      data: { building: 'อาคาร A', floor: '1', room: 'ห้อง 102' },
-    }),
-    prisma.location.create({
-      data: { building: 'อาคาร A', floor: '2', room: 'ห้อง 201' },
-    }),
-    prisma.location.create({
-      data: { building: 'อาคาร A', floor: '2', room: 'ห้อง 202' },
-    }),
-    prisma.location.create({
-      data: { building: 'อาคาร B', floor: '1', room: 'ห้องประชุม 1' },
-    }),
-    prisma.location.create({
-      data: { building: 'อาคาร B', floor: '1', room: 'ห้องประชุม 2' },
-    }),
-    prisma.location.create({
-      data: { building: 'อาคาร B', floor: '2', room: 'ห้อง IT' },
-    }),
-    prisma.location.create({
-      data: { building: 'อาคาร C', floor: '1', room: 'Lobby' },
-    }),
-  ]);
+  const locationsData = [
+    { building: 'อาคาร A', floor: '1', room: 'ห้อง 101' },
+    { building: 'อาคาร A', floor: '1', room: 'ห้อง 102' },
+    { building: 'อาคาร A', floor: '2', room: 'ห้อง 201' },
+    { building: 'อาคาร A', floor: '2', room: 'ห้อง 202' },
+    { building: 'อาคาร B', floor: '1', room: 'ห้องประชุม 1' },
+    { building: 'อาคาร B', floor: '1', room: 'ห้องประชุม 2' },
+    { building: 'อาคาร B', floor: '2', room: 'ห้อง IT' },
+    { building: 'อาคาร C', floor: '1', room: 'Lobby' },
+  ];
 
-  console.log(`Created ${locations.length} locations`);
+  for (const loc of locationsData) {
+    const existing = await prisma.location.findFirst({
+      where: { building: loc.building, floor: loc.floor, room: loc.room },
+    });
+    if (!existing) {
+      await prisma.location.create({ data: loc });
+    }
+  }
+  console.log(`Created ${locationsData.length} locations`);
 
   // Create admin user
   const adminPassword = await bcrypt.hash('admin123', 12);
@@ -100,7 +67,6 @@ async function main() {
       department: 'IT Department',
     },
   });
-
   console.log(`Created admin user: ${admin.email}`);
 
   // Create technician user
@@ -129,7 +95,6 @@ async function main() {
       maxJobsPerDay: 5,
     },
   });
-
   console.log(`Created technician user: ${techUser.email}`);
 
   // Create demo user
@@ -146,7 +111,6 @@ async function main() {
       department: 'HR',
     },
   });
-
   console.log(`Created demo user: ${demoUser.email}`);
 
   console.log('Seeding completed!');
