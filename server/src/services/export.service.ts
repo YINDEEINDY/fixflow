@@ -6,22 +6,18 @@ import { prisma } from '../config/db.js';
 import { RequestStatus, Priority } from '@prisma/client';
 
 
-// Font paths - using Noto Sans (Latin+numbers) and Noto Sans Thai
+// Font paths - using IBM Plex Sans Thai (has both Thai AND Latin/numbers in one font)
 const FONT_PATH = path.join(process.cwd(), 'assets/fonts');
-const LATIN_FONT_REGULAR = path.join(FONT_PATH, 'NotoSans-Regular.ttf');
-const LATIN_FONT_BOLD = path.join(FONT_PATH, 'NotoSans-Bold.ttf');
-const THAI_FONT_REGULAR = path.join(FONT_PATH, 'NotoSansThai-Regular.ttf');
-const THAI_FONT_BOLD = path.join(FONT_PATH, 'NotoSansThai-Bold.ttf');
+const THAI_FONT_REGULAR = path.join(FONT_PATH, 'IBMPlexSansThai-Regular.ttf');
+const THAI_FONT_BOLD = path.join(FONT_PATH, 'IBMPlexSansThai-Bold.ttf');
 
 // Check if fonts are available
-const hasLatinFonts = fs.existsSync(LATIN_FONT_REGULAR) && fs.existsSync(LATIN_FONT_BOLD);
 const hasThaiFonts = fs.existsSync(THAI_FONT_REGULAR) && fs.existsSync(THAI_FONT_BOLD);
 
 // Debug logging for production
 console.log('[Export Service] Font configuration:');
 console.log('  - CWD:', process.cwd());
 console.log('  - FONT_PATH:', FONT_PATH);
-console.log('  - hasLatinFonts:', hasLatinFonts);
 console.log('  - hasThaiFonts:', hasThaiFonts);
 
 interface ExportFilters {
@@ -173,24 +169,17 @@ export async function exportToPdf(filters: ExportFilters): Promise<Buffer> {
         reject(err);
       });
 
-      // Register fonts based on availability
-      // Use Latin fonts for numbers/English, Thai fonts for Thai text
-      if (hasLatinFonts) {
-        doc.registerFont('Latin', LATIN_FONT_REGULAR);
-        doc.registerFont('Latin-Bold', LATIN_FONT_BOLD);
-        console.log('[Export PDF] Latin fonts registered');
-      }
+      // Register IBM Plex Sans Thai fonts (has both Thai AND Latin/numbers)
       if (hasThaiFonts) {
         doc.registerFont('Thai', THAI_FONT_REGULAR);
         doc.registerFont('Thai-Bold', THAI_FONT_BOLD);
-        console.log('[Export PDF] Thai fonts registered');
+        console.log('[Export PDF] Thai fonts registered (IBM Plex Sans Thai)');
       }
 
-      // For mixed content, we use Latin fonts (which have numbers)
-      // Thai characters will show as boxes but numbers will work
-      const fontRegular = hasLatinFonts ? 'Latin' : 'Helvetica';
-      const fontBold = hasLatinFonts ? 'Latin-Bold' : 'Helvetica-Bold';
-      console.log('[Export PDF] Using fonts:', { fontRegular, fontBold, hasLatinFonts, hasThaiFonts });
+      // Use Thai font for everything (it has Thai + Latin + numbers)
+      const fontRegular = hasThaiFonts ? 'Thai' : 'Helvetica';
+      const fontBold = hasThaiFonts ? 'Thai-Bold' : 'Helvetica-Bold';
+      console.log('[Export PDF] Using fonts:', { fontRegular, fontBold, hasThaiFonts });
 
     // Title
     doc.font(fontBold).fontSize(18).text('รายงานการแจ้งซ่อม FixFlow', { align: 'center' });

@@ -25,6 +25,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@fontsource/ibm-plex-sans-thai": "^5.2.8",
     "@fontsource/sarabun": "^5.2.8",
     "@prisma/client": "^6.0.0",
     "bcryptjs": "^3.0.3",
