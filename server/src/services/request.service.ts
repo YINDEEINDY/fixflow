@@ -412,6 +412,16 @@ export async function assignRequest(id: string, technicianId: string, adminId: s
     include: {
       category: true,
       location: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          department: true,
+          avatarUrl: true,
+        },
+      },
       technician: {
         include: {
           user: {
@@ -474,6 +484,32 @@ export async function acceptRequest(id: string, technicianUserId: string) {
   const updated = await prisma.request.update({
     where: { id },
     data: { status: 'accepted' },
+    include: {
+      category: true,
+      location: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          department: true,
+          avatarUrl: true,
+        },
+      },
+      technician: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              phone: true,
+              avatarUrl: true,
+            },
+          },
+        },
+      },
+    },
   });
 
   await prisma.requestLog.create({
@@ -529,6 +565,32 @@ export async function rejectRequest(id: string, technicianUserId: string, reason
       technicianId: null,
       assignedAt: null,
     },
+    include: {
+      category: true,
+      location: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          department: true,
+          avatarUrl: true,
+        },
+      },
+      technician: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              phone: true,
+              avatarUrl: true,
+            },
+          },
+        },
+      },
+    },
   });
 
   await prisma.requestLog.create({
@@ -583,6 +645,32 @@ export async function startRequest(id: string, technicianUserId: string) {
       status: 'in_progress',
       startedAt: new Date(),
     },
+    include: {
+      category: true,
+      location: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          department: true,
+          avatarUrl: true,
+        },
+      },
+      technician: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              phone: true,
+              avatarUrl: true,
+            },
+          },
+        },
+      },
+    },
   });
 
   await prisma.requestLog.create({
@@ -636,6 +724,32 @@ export async function completeRequest(id: string, technicianUserId: string, note
     data: {
       status: 'completed',
       completedAt: new Date(),
+    },
+    include: {
+      category: true,
+      location: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+          department: true,
+          avatarUrl: true,
+        },
+      },
+      technician: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              phone: true,
+              avatarUrl: true,
+            },
+          },
+        },
+      },
     },
   });
 
