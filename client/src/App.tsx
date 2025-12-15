@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 import { Loader2 } from 'lucide-react';
 
 import { useAuthStore } from './stores/auth.store';
@@ -119,12 +120,23 @@ function AppRoutes() {
   );
 }
 
+const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY || '';
+
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
+      <GoogleReCaptchaProvider
+        reCaptchaKey={recaptchaSiteKey}
+        scriptProps={{
+          async: true,
+          defer: true,
+          appendTo: 'head',
+        }}
+      >
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </GoogleReCaptchaProvider>
     </QueryClientProvider>
   );
 }

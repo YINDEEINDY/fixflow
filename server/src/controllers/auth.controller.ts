@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import * as authService from '../services/auth.service.js';
 import { sendSuccess, sendError } from '../utils/response.js';
+import { verifyRecaptcha } from '../utils/recaptcha.js';
 import { AuthRequest } from '../types/index.js';
 import { env } from '../config/env.js';
 
@@ -11,11 +12,13 @@ const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   phone: z.string().optional(),
   department: z.string().optional(),
+  recaptchaToken: z.string().optional(),
 });
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email format'),
   password: z.string().min(1, 'Password is required'),
+  recaptchaToken: z.string().optional(),
 });
 
 const lineLoginSchema = z.object({
@@ -25,6 +28,16 @@ const lineLoginSchema = z.object({
 export async function register(req: Request, res: Response): Promise<void> {
   try {
     const input = registerSchema.parse(req.body);
+
+    // Verify reCAPTCHA token
+    if (input.recaptchaToken) {
+      const isValid = await verifyRecaptcha(input.recaptchaToken, 'register');
+      if (!isValid) {
+        sendError(res, 'RECAPTCHA_FAILED', 'reCAPTCHA verification failed', 400);
+        return;
+      }
+    }
+
     const result = await authService.register(input);
 
     // Set refresh token as HTTP-only cookie (7 days)
@@ -61,6 +74,16 @@ export async function register(req: Request, res: Response): Promise<void> {
 export async function login(req: Request, res: Response): Promise<void> {
   try {
     const input = loginSchema.parse(req.body);
+
+    // Verify reCAPTCHA token
+    if (input.recaptchaToken) {
+      const isValid = await verifyRecaptcha(input.recaptchaToken, 'login');
+      if (!isValid) {
+        sendError(res, 'RECAPTCHA_FAILED', 'reCAPTCHA verification failed', 400);
+        return;
+      }
+    }
+
     const rememberMe = req.body.rememberMe === true;
     const result = await authService.login(input);
 

@@ -7,8 +7,8 @@ interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string, rememberMe?: boolean) => Promise<void>;
-  register: (data: RegisterData) => Promise<void>;
+  login: (email: string, password: string, rememberMe?: boolean, recaptchaToken?: string) => Promise<void>;
+  register: (data: RegisterData, recaptchaToken?: string) => Promise<void>;
   loginWithLine: (code: string) => Promise<void>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
@@ -30,8 +30,8 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       isLoading: true,
 
-      login: async (email: string, password: string, rememberMe?: boolean) => {
-        const response = await api.post<AuthResponse>('/auth/login', { email, password, rememberMe });
+      login: async (email: string, password: string, rememberMe?: boolean, recaptchaToken?: string) => {
+        const response = await api.post<AuthResponse>('/auth/login', { email, password, rememberMe, recaptchaToken });
 
         if (!response.success || !response.data) {
           throw new Error(response.error?.message || 'Login failed');
@@ -41,8 +41,8 @@ export const useAuthStore = create<AuthState>()(
         set({ user: response.data.user, isAuthenticated: true });
       },
 
-      register: async (data: RegisterData) => {
-        const response = await api.post<AuthResponse>('/auth/register', data);
+      register: async (data: RegisterData, recaptchaToken?: string) => {
+        const response = await api.post<AuthResponse>('/auth/register', { ...data, recaptchaToken });
 
         if (!response.success || !response.data) {
           throw new Error(response.error?.message || 'Registration failed');

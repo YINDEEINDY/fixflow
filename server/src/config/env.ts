@@ -22,6 +22,8 @@ const envSchema = z.object({
   EMAIL_FROM: z.string().optional(),
   // App URL for password reset links
   APP_URL: z.string().default('http://localhost:5173'),
+  // Google reCAPTCHA v3
+  RECAPTCHA_SECRET_KEY: z.string().optional(),
   PORT: z.string().default('3001'),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),

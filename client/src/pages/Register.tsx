@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { Wrench, Mail, Lock, User, Phone, Building } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -28,6 +29,7 @@ type RegisterForm = z.infer<typeof registerSchema>;
 export default function Register() {
   const navigate = useNavigate();
   const { register: registerUser } = useAuthStore();
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -39,25 +41,29 @@ export default function Register() {
     resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = async (data: RegisterForm) => {
+  const onSubmit = useCallback(async (data: RegisterForm) => {
     setError(null);
     setIsLoading(true);
 
     try {
+      let recaptchaToken: string | undefined;
+      if (executeRecaptcha) {
+        recaptchaToken = await executeRecaptcha('register');
+      }
       await registerUser({
         name: data.name,
         email: data.email,
         password: data.password,
         phone: data.phone,
         department: data.department,
-      });
+      }, recaptchaToken);
       navigate('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'สมัครสมาชิกไม่สำเร็จ');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [executeRecaptcha, registerUser, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center p-4">
