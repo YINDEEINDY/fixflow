@@ -108,10 +108,10 @@ export default function RequestList() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             {isAdmin ? 'รายการแจ้งซ่อมทั้งหมด' : 'รายการแจ้งซ่อมของฉัน'}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             ทั้งหมด {pagination.total} รายการ
           </p>
         </div>
@@ -150,13 +150,13 @@ export default function RequestList() {
           </div>
 
           {showFilters && (
-            <div className="mt-4 pt-4 border-t border-gray-200 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   สถานะ
                 </label>
                 <select
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   value={filters.status || ''}
                   onChange={(e) =>
                     handleStatusFilter(e.target.value as RequestStatus || undefined)
@@ -171,11 +171,11 @@ export default function RequestList() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   ความเร่งด่วน
                 </label>
                 <select
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   value={filters.priority || ''}
                   onChange={(e) =>
                     handlePriorityFilter(e.target.value as Priority || undefined)
@@ -190,11 +190,11 @@ export default function RequestList() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   หมวดหมู่
                 </label>
                 <select
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   value={filters.categoryId || ''}
                   onChange={(e) =>
                     handleCategoryFilter(e.target.value || undefined)
@@ -217,12 +217,12 @@ export default function RequestList() {
       {isLoading ? (
         <div className="text-center py-12">
           <div className="animate-spin w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full mx-auto"></div>
-          <p className="mt-2 text-gray-600">กำลังโหลด...</p>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">กำลังโหลด...</p>
         </div>
       ) : requests.length === 0 ? (
         <Card>
           <CardContent className="p-8 text-center">
-            <p className="text-gray-500">ไม่พบรายการแจ้งซ่อม</p>
+            <p className="text-gray-500 dark:text-gray-400">ไม่พบรายการแจ้งซ่อม</p>
             {user?.role === 'user' && (
               <Link to="/requests/new">
                 <Button className="mt-4">
@@ -242,7 +242,7 @@ export default function RequestList() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
                           {request.requestNumber}
                         </span>
                         <span
@@ -253,10 +253,10 @@ export default function RequestList() {
                           {statusLabels[request.status]}
                         </span>
                       </div>
-                      <h3 className="font-medium text-gray-900 truncate">
+                      <h3 className="font-medium text-gray-900 dark:text-white truncate">
                         {request.title}
                       </h3>
-                      <div className="mt-1 text-sm text-gray-500 space-x-2">
+                      <div className="mt-1 text-sm text-gray-500 dark:text-gray-400 space-x-2">
                         <span>{request.category.nameTh}</span>
                         <span>•</span>
                         <span>
@@ -267,7 +267,7 @@ export default function RequestList() {
                         <span>{formatDate(request.createdAt)}</span>
                       </div>
                       {isAdmin && (
-                        <div className="mt-1 text-sm text-gray-500">
+                        <div className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                           ผู้แจ้ง: {request.user.name}
                           {request.technician && (
                             <span> • ช่าง: {request.technician.user.name}</span>
@@ -299,7 +299,7 @@ export default function RequestList() {
           >
             <ChevronLeft className="w-4 h-4" />
           </Button>
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-600 dark:text-gray-400">
             หน้า {pagination.page} จาก {pagination.totalPages}
           </span>
           <Button

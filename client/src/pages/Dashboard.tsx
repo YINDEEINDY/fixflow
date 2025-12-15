@@ -105,10 +105,10 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             สวัสดี, {user?.name}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             {user?.role === 'admin'
               ? 'ภาพรวมระบบแจ้งซ่อม'
               : user?.role === 'technician'
@@ -134,7 +134,7 @@ export default function Dashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">ทั้งหมด</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">ทั้งหมด</p>
                     <p className="text-2xl font-bold">{userStats.total}</p>
                   </div>
                   <ClipboardList className="w-8 h-8 text-primary-500" />
@@ -145,7 +145,7 @@ export default function Dashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">รอดำเนินการ</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">รอดำเนินการ</p>
                     <p className="text-2xl font-bold text-yellow-600">{userStats.pending}</p>
                   </div>
                   <Clock className="w-8 h-8 text-yellow-500" />
@@ -156,7 +156,7 @@ export default function Dashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">กำลังดำเนินการ</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">กำลังดำเนินการ</p>
                     <p className="text-2xl font-bold text-blue-600">{userStats.inProgress}</p>
                   </div>
                   <TrendingUp className="w-8 h-8 text-blue-500" />
@@ -167,7 +167,7 @@ export default function Dashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">เสร็จสิ้น</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">เสร็จสิ้น</p>
                     <p className="text-2xl font-bold text-green-600">{userStats.completed}</p>
                   </div>
                   <CheckCircle className="w-8 h-8 text-green-500" />
@@ -183,7 +183,7 @@ export default function Dashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">รอรับงาน</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">รอรับงาน</p>
                     <p className="text-2xl font-bold text-yellow-600">{techStats.assigned}</p>
                   </div>
                   <Clock className="w-8 h-8 text-yellow-500" />
@@ -194,7 +194,7 @@ export default function Dashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">กำลังทำ</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">กำลังทำ</p>
                     <p className="text-2xl font-bold text-blue-600">{techStats.inProgress}</p>
                   </div>
                   <TrendingUp className="w-8 h-8 text-blue-500" />
@@ -205,7 +205,7 @@ export default function Dashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">เสร็จวันนี้</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">เสร็จวันนี้</p>
                     <p className="text-2xl font-bold text-green-600">{techStats.completedToday}</p>
                   </div>
                   <CheckCircle className="w-8 h-8 text-green-500" />
@@ -216,7 +216,7 @@ export default function Dashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">คะแนนเฉลี่ย</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">คะแนนเฉลี่ย</p>
                     <p className="text-2xl font-bold">{techStats.rating?.toFixed(1) || '-'}</p>
                   </div>
                   <Star className="w-8 h-8 text-yellow-500" />
@@ -232,7 +232,7 @@ export default function Dashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">แจ้งวันนี้</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">แจ้งวันนี้</p>
                     <p className="text-2xl font-bold">{adminStats.totalToday}</p>
                   </div>
                   <ClipboardList className="w-8 h-8 text-primary-500" />
@@ -243,7 +243,7 @@ export default function Dashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">รอมอบหมาย</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">รอมอบหมาย</p>
                     <p className="text-2xl font-bold text-yellow-600">{adminStats.pending}</p>
                   </div>
                   <AlertTriangle className="w-8 h-8 text-yellow-500" />
@@ -254,7 +254,7 @@ export default function Dashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">กำลังดำเนินการ</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">กำลังดำเนินการ</p>
                     <p className="text-2xl font-bold text-blue-600">{adminStats.inProgress}</p>
                   </div>
                   <TrendingUp className="w-8 h-8 text-blue-500" />
@@ -265,7 +265,7 @@ export default function Dashboard() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-500">เวลาเฉลี่ย</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">เวลาเฉลี่ย</p>
                     <p className="text-2xl font-bold">{adminStats.avgResolutionTime}</p>
                   </div>
                   <Clock className="w-8 h-8 text-gray-500" />
@@ -289,20 +289,20 @@ export default function Dashboard() {
         </CardHeader>
         <CardContent className="p-0">
           {recentRequests.length === 0 ? (
-            <div className="p-6 text-center text-gray-500">
+            <div className="p-6 text-center text-gray-500 dark:text-gray-400">
               ยังไม่มีรายการแจ้งซ่อม
             </div>
           ) : (
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {recentRequests.map((request) => (
                 <Link
                   key={request.id}
                   to={`/requests/${request.id}`}
-                  className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
                         {request.requestNumber}
                       </span>
                       <span
@@ -313,10 +313,10 @@ export default function Dashboard() {
                         {statusLabels[request.status]}
                       </span>
                     </div>
-                    <p className="font-medium text-gray-900 truncate">
+                    <p className="font-medium text-gray-900 dark:text-white truncate">
                       {request.title}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       {request.category} • {formatTime(request.createdAt)}
                     </p>
                   </div>

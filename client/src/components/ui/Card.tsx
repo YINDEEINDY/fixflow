@@ -6,20 +6,31 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {}
 const Card = forwardRef<HTMLDivElement, CardProps>(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('bg-white rounded-xl shadow-sm border border-gray-200', className)}
+    className={cn(
+      'bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors',
+      className
+    )}
     {...props}
   />
 ));
 Card.displayName = 'Card';
 
 const CardHeader = forwardRef<HTMLDivElement, CardProps>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn('px-6 py-4 border-b border-gray-200', className)} {...props} />
+  <div
+    ref={ref}
+    className={cn('px-6 py-4 border-b border-gray-200 dark:border-gray-700', className)}
+    {...props}
+  />
 ));
 CardHeader.displayName = 'CardHeader';
 
 const CardTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHeadingElement>>(
   ({ className, ...props }, ref) => (
-    <h3 ref={ref} className={cn('text-lg font-semibold text-gray-900', className)} {...props} />
+    <h3
+      ref={ref}
+      className={cn('text-lg font-semibold text-gray-900 dark:text-white', className)}
+      {...props}
+    />
   )
 );
 CardTitle.displayName = 'CardTitle';
@@ -32,7 +43,10 @@ CardContent.displayName = 'CardContent';
 const CardFooter = forwardRef<HTMLDivElement, CardProps>(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-xl', className)}
+    className={cn(
+      'px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 rounded-b-xl',
+      className
+    )}
     {...props}
   />
 ));

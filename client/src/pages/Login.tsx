@@ -52,15 +52,15 @@ export default function Login() {
   }, [executeRecaptcha, login, navigate, rememberMe]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4 transition-colors">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-500 rounded-2xl mb-4">
             <Wrench className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">FixFlow</h1>
-          <p className="text-gray-600 mt-1">ระบบแจ้งซ่อม/บำรุงรักษา</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">FixFlow</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">ระบบแจ้งซ่อม/บำรุงรักษา</p>
         </div>
 
         <Card>
@@ -70,7 +70,7 @@ export default function Login() {
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400 text-sm">
                   {error}
                 </div>
               )}
@@ -107,9 +107,9 @@ export default function Login() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700"
                 />
-                <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700">
+                <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                   จดจำฉันไว้
                 </label>
               </div>
@@ -125,9 +125,9 @@ export default function Login() {
               </Link>
             </div>
 
-            <p className="mt-6 text-center text-sm text-gray-600">
+            <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
               ยังไม่มีบัญชี?{' '}
-              <Link to="/register" className="text-primary-600 hover:text-primary-500 font-medium">
+              <Link to="/register" className="text-primary-600 hover:text-primary-500 dark:text-primary-400 font-medium">
                 สมัครสมาชิก
               </Link>
             </p>

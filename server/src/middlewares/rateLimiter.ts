@@ -1,5 +1,8 @@
 import rateLimit from 'express-rate-limit';
 
+// Skip rate limiting in test/development when SKIP_RATE_LIMIT is set
+const skipRateLimit = process.env.SKIP_RATE_LIMIT === 'true';
+
 // Strict rate limit for login attempts (prevent brute force)
 export const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -14,6 +17,7 @@ export const loginLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: true, // Only count failed attempts
+  skip: () => skipRateLimit, // Skip in test mode
 });
 
 // Rate limit for registration (prevent spam accounts)
@@ -29,6 +33,7 @@ export const registerLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => skipRateLimit, // Skip in test mode
 });
 
 // Rate limit for password reset (prevent email spam)

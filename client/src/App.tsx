@@ -5,6 +5,7 @@ import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 import { Loader2 } from 'lucide-react';
 
 import { useAuthStore } from './stores/auth.store';
+import { ThemeProvider } from './contexts/ThemeContext';
 import MainLayout from './components/layout/MainLayout';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -124,19 +125,21 @@ const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY || '';
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <GoogleReCaptchaProvider
-        reCaptchaKey={recaptchaSiteKey}
-        scriptProps={{
-          async: true,
-          defer: true,
-          appendTo: 'head',
-        }}
-      >
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </GoogleReCaptchaProvider>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <GoogleReCaptchaProvider
+          reCaptchaKey={recaptchaSiteKey}
+          scriptProps={{
+            async: true,
+            defer: true,
+            appendTo: 'head',
+          }}
+        >
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </GoogleReCaptchaProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
