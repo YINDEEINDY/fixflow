@@ -139,13 +139,19 @@ export default function UsersManagement() {
   };
 
   const handleDelete = async (user: AdminUser) => {
-    if (!confirm(`คุณแน่ใจหรือไม่ที่จะปิดการใช้งานผู้ใช้ "${user.name}"?`)) return;
+    if (!confirm(`คุณแน่ใจหรือไม่ที่จะลบผู้ใช้ "${user.name}"? การลบนี้ไม่สามารถย้อนกลับได้`)) return;
 
     try {
-      await adminApi.users.delete(user.id);
+      const response = await adminApi.users.delete(user.id);
+      if (!response.success) {
+        const message = response.error?.message || 'ไม่สามารถลบผู้ใช้ได้';
+        alert(message);
+        return;
+      }
       fetchUsers();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Failed to delete user:', error);
+      alert('ไม่สามารถลบผู้ใช้ได้');
     }
   };
 

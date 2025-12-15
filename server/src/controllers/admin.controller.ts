@@ -123,12 +123,18 @@ export async function deleteUser(req: AuthRequest, res: Response) {
   try {
     const { id } = req.params;
     await adminService.deleteUser(id);
-    return res.json({ success: true, data: { message: 'User deactivated' } });
+    return res.json({ success: true, data: { message: 'User deleted' } });
   } catch (error) {
     if (error instanceof Error && error.message === 'USER_NOT_FOUND') {
       return res.status(404).json({
         success: false,
         error: { code: 'NOT_FOUND', message: 'User not found' },
+      });
+    }
+    if (error instanceof Error && error.message === 'USER_HAS_REQUESTS') {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'USER_HAS_REQUESTS', message: 'ไม่สามารถลบผู้ใช้ที่มีคำขอแจ้งซ่อมได้ กรุณาปิดใช้งานแทน' },
       });
     }
     console.error('Delete user error:', error);

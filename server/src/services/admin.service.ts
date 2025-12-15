@@ -186,10 +186,27 @@ export async function deleteUser(id: string) {
   const user = await prisma.user.findUnique({ where: { id } });
   if (!user) throw new Error('USER_NOT_FOUND');
 
-  // Soft delete - just deactivate
-  await prisma.user.update({
-    where: { id },
-    data: { isActive: false },
+  // Check if user has any requests (as creator)
+  const requestCount = await prisma.request.count({ where: { userId: id } });
+  if (requestCount > 0) {
+    throw new Error('USER_HAS_REQUESTS');
+  }
+
+  // Hard delete - delete user and related data
+  // Cascade will handle: Notification, Technician, PasswordResetToken
+  // We need to manually delete: Rating, RequestLog (created by this user)
+  await prisma.$transaction(async (tx) => {
+    // Delete ratings made by this user
+    await tx.rating.deleteMany({ where: { userId: id } });
+
+    // Delete request logs created by this user
+    await tx.requestLog.deleteMany({ where: { createdBy: id } });
+
+    // Delete refresh tokens
+    await tx.refreshToken.deleteMany({ where: { userId: id } });
+
+    // Delete user (cascade will handle notifications, technician, password reset tokens)
+    await tx.user.delete({ where: { id } });
   });
 
   return { success: true };
