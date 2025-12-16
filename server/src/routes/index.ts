@@ -10,6 +10,7 @@ import profileRoutes from './profile.routes.js';
 import uploadRoutes from './upload.routes.js';
 import settingsRoutes from './settings.routes.js';
 import exportRoutes from './export.routes.js';
+import chatRoutes from './chat.routes.js';
 
 const router = Router();
 
@@ -24,6 +25,7 @@ router.use('/profile', profileRoutes);
 router.use('/upload', uploadRoutes);
 router.use('/settings', settingsRoutes);
 router.use('/export', exportRoutes);
+router.use('/chat', chatRoutes);
 
 // Health check
 router.get('/health', (_req, res) => {

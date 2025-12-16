@@ -19,6 +19,7 @@ import { useAuthStore } from '../../stores/auth.store';
 import { cn } from '../../utils/cn';
 import NotificationDropdown from '../NotificationDropdown';
 import { ThemeToggle } from '../ThemeToggle';
+import { ChatWidget } from '../chat';
 
 const navigation = {
   user: [
@@ -166,6 +167,9 @@ export default function MainLayout() {
           <Outlet />
         </main>
       </div>
+
+      {/* AI Chat Widget */}
+      <ChatWidget />
     </div>
   );
 }

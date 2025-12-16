@@ -22,6 +22,19 @@ model Category {
   @@map("categories")
 }
 
+model ChatMessage {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  role      String   // "user" or "assistant"
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt(sort: Desc)])
+  @@map("chat_messages")
+}
+
 model JobNote {
   id               String     @id @default(uuid())
   requestId        String     @map("request_id")
@@ -206,6 +219,7 @@ model User {
   requests             Request[]
   technician           Technician?
   passwordResetTokens  PasswordResetToken[]
+  chatMessages         ChatMessage[]
 
   @@map("users")
 }
