@@ -31,4 +31,9 @@ router.delete('/locations/:id', adminController.deleteLocation);
 router.get('/reports/stats', adminController.getReportStats);
 router.get('/reports/trend', adminController.getMonthlyTrend);
 
+// Bulk Operations
+router.post('/bulk/assign', adminController.bulkAssignRequests);
+router.post('/bulk/status', adminController.bulkUpdateStatus);
+router.post('/bulk/preview', adminController.getRequestsByIds);
+
 export default router;

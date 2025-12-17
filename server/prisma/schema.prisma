@@ -18,6 +18,7 @@ model Category {
   sortOrder Int       @default(0) @map("sort_order")
   createdAt DateTime  @default(now()) @map("created_at")
   requests  Request[]
+  templates RequestTemplate[]
 
   @@map("categories")
 }
@@ -156,6 +157,10 @@ model Request {
   createdAt     DateTime      @default(now()) @map("created_at")
   updatedAt     DateTime      @updatedAt @map("updated_at")
   deletedAt     DateTime?     @map("deleted_at")
+  // SLA tracking
+  slaDeadline   DateTime?     @map("sla_deadline")
+  slaBreached   Boolean       @default(false) @map("sla_breached")
+  firstResponseAt DateTime?   @map("first_response_at")
   jobNotes      JobNote[]
   rating        Rating?
   requestLogs   RequestLog[]
@@ -171,6 +176,8 @@ model Request {
   @@index([status])
   @@index([technicianId])
   @@index([userId])
+  @@index([slaDeadline])
+  @@index([slaBreached])
   @@map("requests")
 }
 
@@ -182,6 +189,43 @@ model SystemSetting {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("system_settings")
+}
+
+// Request Templates - commonly used request configurations
+model RequestTemplate {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  categoryId  String   @map("category_id")
+  title       String
+  content     String?  // Default description
+  priority    Priority @default(normal)
+  isActive    Boolean  @default(true) @map("is_active")
+  isPublic    Boolean  @default(true) @map("is_public") // Available to all users
+  usageCount  Int      @default(0) @map("usage_count")
+  createdBy   String?  @map("created_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  category    Category @relation(fields: [categoryId], references: [id])
+  creator     User?    @relation(fields: [createdBy], references: [id])
+
+  @@index([categoryId])
+  @@index([isActive])
+  @@index([usageCount(sort: Desc)])
+  @@map("request_templates")
+}
+
+// SLA Configuration per priority
+model SLAConfig {
+  id           String   @id @default(uuid())
+  priority     Priority @unique
+  responseTime Int      @map("response_time")   // Hours to first response
+  resolveTime  Int      @map("resolve_time")    // Hours to resolution
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("sla_configs")
 }
 
 model Technician {
@@ -220,6 +264,7 @@ model User {
   technician           Technician?
   passwordResetTokens  PasswordResetToken[]
   chatMessages         ChatMessage[]
+  createdTemplates     RequestTemplate[]
 
   @@map("users")
 }

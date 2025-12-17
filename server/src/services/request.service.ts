@@ -819,3 +819,157 @@ export async function getTechnicians() {
   console.log('Found technicians:', technicians.length);
   return technicians;
 }
+
+// Bulk Operations
+
+interface BulkAssignInput {
+  requestIds: string[];
+  technicianId: string;
+  adminId: string;
+  note?: string;
+}
+
+interface BulkUpdateStatusInput {
+  requestIds: string[];
+  status: RequestStatus;
+  userId: string;
+  note?: string;
+}
+
+export async function bulkAssignRequests(input: BulkAssignInput) {
+  const { requestIds, technicianId, adminId, note } = input;
+
+  const technician = await prisma.technician.findUnique({
+    where: { id: technicianId },
+    include: { user: { select: { name: true } } },
+  });
+
+  if (!technician) {
+    throw new Error('TECHNICIAN_NOT_FOUND');
+  }
+
+  const results = {
+    success: [] as string[],
+    failed: [] as { id: string; reason: string }[],
+  };
+
+  for (const requestId of requestIds) {
+    try {
+      const request = await prisma.request.findUnique({ where: { id: requestId } });
+
+      if (!request || request.deletedAt) {
+        results.failed.push({ id: requestId, reason: 'NOT_FOUND' });
+        continue;
+      }
+
+      if (!['pending', 'rejected'].includes(request.status)) {
+        results.failed.push({ id: requestId, reason: 'INVALID_STATUS' });
+        continue;
+      }
+
+      await prisma.request.update({
+        where: { id: requestId },
+        data: {
+          technicianId,
+          status: 'assigned',
+          assignedAt: new Date(),
+        },
+      });
+
+      await prisma.requestLog.create({
+        data: {
+          requestId,
+          action: 'bulk_assigned',
+          oldStatus: request.status,
+          newStatus: 'assigned',
+          note: note || `Bulk assigned to ${technician.user.name}`,
+          createdBy: adminId,
+        },
+      });
+
+      results.success.push(requestId);
+    } catch (error) {
+      results.failed.push({ id: requestId, reason: 'ERROR' });
+    }
+  }
+
+  return results;
+}
+
+export async function bulkUpdateStatus(input: BulkUpdateStatusInput) {
+  const { requestIds, status, userId, note } = input;
+
+  const results = {
+    success: [] as string[],
+    failed: [] as { id: string; reason: string }[],
+  };
+
+  for (const requestId of requestIds) {
+    try {
+      const request = await prisma.request.findUnique({ where: { id: requestId } });
+
+      if (!request || request.deletedAt) {
+        results.failed.push({ id: requestId, reason: 'NOT_FOUND' });
+        continue;
+      }
+
+      const oldStatus = request.status;
+
+      await prisma.request.update({
+        where: { id: requestId },
+        data: {
+          status,
+          ...(status === 'completed' ? { completedAt: new Date() } : {}),
+          ...(status === 'cancelled' ? { deletedAt: new Date() } : {}),
+        },
+      });
+
+      await prisma.requestLog.create({
+        data: {
+          requestId,
+          action: 'bulk_status_update',
+          oldStatus,
+          newStatus: status,
+          note,
+          createdBy: userId,
+        },
+      });
+
+      results.success.push(requestId);
+    } catch (error) {
+      results.failed.push({ id: requestId, reason: 'ERROR' });
+    }
+  }
+
+  return results;
+}
+
+// Get requests by IDs (for bulk operations preview)
+export async function getRequestsByIds(ids: string[]) {
+  return prisma.request.findMany({
+    where: {
+      id: { in: ids },
+      deletedAt: null,
+    },
+    include: {
+      category: true,
+      location: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      technician: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+}

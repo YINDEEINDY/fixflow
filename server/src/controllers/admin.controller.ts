@@ -1,7 +1,8 @@
 import { Response } from 'express';
 import { AuthRequest } from '../types/index.js';
 import * as adminService from '../services/admin.service.js';
-import { Role } from '@prisma/client';
+import * as requestService from '../services/request.service.js';
+import { Role, RequestStatus } from '@prisma/client';
 
 // ============ USER MANAGEMENT ============
 
@@ -376,6 +377,135 @@ export async function getMonthlyTrend(req: AuthRequest, res: Response) {
     return res.status(500).json({
       success: false,
       error: { code: 'SERVER_ERROR', message: 'Failed to get monthly trend' },
+    });
+  }
+}
+
+// ============ BULK OPERATIONS ============
+
+export async function bulkAssignRequests(req: AuthRequest, res: Response) {
+  try {
+    const { requestIds, technicianId, note } = req.body;
+    const adminId = req.user?.id;
+
+    if (!adminId) {
+      return res.status(401).json({
+        success: false,
+        error: { code: 'UNAUTHORIZED', message: 'Unauthorized' },
+      });
+    }
+
+    if (!requestIds || !Array.isArray(requestIds) || requestIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'VALIDATION_ERROR', message: 'requestIds is required and must be a non-empty array' },
+      });
+    }
+
+    if (!technicianId) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'VALIDATION_ERROR', message: 'technicianId is required' },
+      });
+    }
+
+    const result = await requestService.bulkAssignRequests({
+      requestIds,
+      technicianId,
+      adminId,
+      note,
+    });
+
+    return res.json({
+      success: true,
+      data: {
+        ...result,
+        message: `Successfully assigned ${result.success.length} requests, ${result.failed.length} failed`,
+      },
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message === 'TECHNICIAN_NOT_FOUND') {
+      return res.status(404).json({
+        success: false,
+        error: { code: 'NOT_FOUND', message: 'Technician not found' },
+      });
+    }
+    console.error('Bulk assign error:', error);
+    return res.status(500).json({
+      success: false,
+      error: { code: 'SERVER_ERROR', message: 'Failed to bulk assign requests' },
+    });
+  }
+}
+
+export async function bulkUpdateStatus(req: AuthRequest, res: Response) {
+  try {
+    const { requestIds, status, note } = req.body;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: { code: 'UNAUTHORIZED', message: 'Unauthorized' },
+      });
+    }
+
+    if (!requestIds || !Array.isArray(requestIds) || requestIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'VALIDATION_ERROR', message: 'requestIds is required and must be a non-empty array' },
+      });
+    }
+
+    const validStatuses: RequestStatus[] = ['pending', 'assigned', 'accepted', 'in_progress', 'on_hold', 'completed', 'cancelled', 'rejected'];
+    if (!status || !validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'VALIDATION_ERROR', message: 'Valid status is required' },
+      });
+    }
+
+    const result = await requestService.bulkUpdateStatus({
+      requestIds,
+      status,
+      userId,
+      note,
+    });
+
+    return res.json({
+      success: true,
+      data: {
+        ...result,
+        message: `Successfully updated ${result.success.length} requests, ${result.failed.length} failed`,
+      },
+    });
+  } catch (error) {
+    console.error('Bulk update status error:', error);
+    return res.status(500).json({
+      success: false,
+      error: { code: 'SERVER_ERROR', message: 'Failed to bulk update requests' },
+    });
+  }
+}
+
+export async function getRequestsByIds(req: AuthRequest, res: Response) {
+  try {
+    const { ids } = req.body;
+
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'VALIDATION_ERROR', message: 'ids is required and must be a non-empty array' },
+      });
+    }
+
+    const requests = await requestService.getRequestsByIds(ids);
+    return res.json({ success: true, data: requests });
+  } catch (error) {
+    console.error('Get requests by IDs error:', error);
+    return res.status(500).json({
+      success: false,
+      error: { code: 'SERVER_ERROR', message: 'Failed to get requests' },
     });
   }
 }
