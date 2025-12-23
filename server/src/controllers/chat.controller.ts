@@ -86,23 +86,19 @@ export async function chat(req: AuthRequest, res: Response): Promise<void> {
  * GET /chat/history - Get chat history
  */
 export async function getChatHistory(req: AuthRequest, res: Response): Promise<void> {
-  try {
-    if (!req.user) {
-      sendError(res, 'UNAUTHORIZED', 'Not authenticated', 401);
-      return;
-    }
-
-    const messages = await aiService.getChatHistory(req.user.userId);
-
-    sendSuccess(res, {
-      messages: messages.map((m) => ({
-        id: m.id,
-        content: m.content,
-        role: m.role,
-        timestamp: m.createdAt.toISOString(),
-      })),
-    });
-  } catch (error) {
-    throw error;
+  if (!req.user) {
+    sendError(res, 'UNAUTHORIZED', 'Not authenticated', 401);
+    return;
   }
+
+  const messages = await aiService.getChatHistory(req.user.userId);
+
+  sendSuccess(res, {
+    messages: messages.map((m) => ({
+      id: m.id,
+      content: m.content,
+      role: m.role,
+      timestamp: m.createdAt.toISOString(),
+    })),
+  });
 }
