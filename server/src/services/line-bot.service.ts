@@ -82,7 +82,7 @@ export async function sendLineBotMessage(messages: LineMessage[], to?: string): 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${channelAccessToken}`,
+        Authorization: `Bearer ${channelAccessToken}`,
       },
       body: JSON.stringify({
         to: targetId,

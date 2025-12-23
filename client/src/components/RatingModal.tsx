@@ -53,10 +53,7 @@ export default function RatingModal({
       <Card className="w-full max-w-md">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>ให้คะแนนการบริการ</CardTitle>
-          <button
-            onClick={onClose}
-            className="p-1 hover:bg-gray-100 rounded"
-          >
+          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
             <X className="w-5 h-5" />
           </button>
         </CardHeader>
@@ -108,18 +105,11 @@ export default function RatingModal({
             />
           </div>
 
-          {error && (
-            <p className="text-sm text-red-500 text-center">{error}</p>
-          )}
+          {error && <p className="text-sm text-red-500 text-center">{error}</p>}
 
           {/* Actions */}
           <div className="flex gap-3">
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={onClose}
-              disabled={isSubmitting}
-            >
+            <Button variant="outline" className="flex-1" onClick={onClose} disabled={isSubmitting}>
               ยกเลิก
             </Button>
             <Button

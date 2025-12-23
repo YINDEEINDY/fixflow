@@ -270,14 +270,18 @@ export default function Profile() {
                     <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
                       <CheckCircle className="w-8 h-8 text-green-600" />
                       <div>
-                        <p className="text-2xl font-bold text-green-600">{stats.completedJobs || 0}</p>
+                        <p className="text-2xl font-bold text-green-600">
+                          {stats.completedJobs || 0}
+                        </p>
                         <p className="text-sm text-green-600">เสร็จแล้ว</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg">
                       <Clock className="w-8 h-8 text-yellow-600" />
                       <div>
-                        <p className="text-2xl font-bold text-yellow-600">{stats.inProgressJobs || 0}</p>
+                        <p className="text-2xl font-bold text-yellow-600">
+                          {stats.inProgressJobs || 0}
+                        </p>
                         <p className="text-sm text-yellow-600">กำลังดำเนินการ</p>
                       </div>
                     </div>
@@ -298,21 +302,27 @@ export default function Profile() {
                     <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
                       <FileText className="w-8 h-8 text-blue-600" />
                       <div>
-                        <p className="text-2xl font-bold text-blue-600">{stats.totalRequests || 0}</p>
+                        <p className="text-2xl font-bold text-blue-600">
+                          {stats.totalRequests || 0}
+                        </p>
                         <p className="text-sm text-blue-600">คำร้องทั้งหมด</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg">
                       <Clock className="w-8 h-8 text-yellow-600" />
                       <div>
-                        <p className="text-2xl font-bold text-yellow-600">{stats.pendingRequests || 0}</p>
+                        <p className="text-2xl font-bold text-yellow-600">
+                          {stats.pendingRequests || 0}
+                        </p>
                         <p className="text-sm text-yellow-600">รอดำเนินการ</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
                       <CheckCircle className="w-8 h-8 text-green-600" />
                       <div>
-                        <p className="text-2xl font-bold text-green-600">{stats.completedRequests || 0}</p>
+                        <p className="text-2xl font-bold text-green-600">
+                          {stats.completedRequests || 0}
+                        </p>
                         <p className="text-sm text-green-600">เสร็จแล้ว</p>
                       </div>
                     </div>
@@ -341,7 +351,9 @@ export default function Profile() {
                 label="รหัสผ่านปัจจุบัน"
                 type="password"
                 value={passwordData.currentPassword}
-                onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                onChange={(e) =>
+                  setPasswordData({ ...passwordData, currentPassword: e.target.value })
+                }
                 placeholder="••••••••"
               />
               <Input
@@ -355,7 +367,9 @@ export default function Profile() {
                 label="ยืนยันรหัสผ่านใหม่"
                 type="password"
                 value={passwordData.confirmPassword}
-                onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                onChange={(e) =>
+                  setPasswordData({ ...passwordData, confirmPassword: e.target.value })
+                }
                 placeholder="••••••••"
               />
             </div>
@@ -363,7 +377,9 @@ export default function Profile() {
               <Button
                 variant="outline"
                 onClick={handleChangePassword}
-                disabled={isChangingPassword || !passwordData.currentPassword || !passwordData.newPassword}
+                disabled={
+                  isChangingPassword || !passwordData.currentPassword || !passwordData.newPassword
+                }
               >
                 {isChangingPassword ? (
                   <Loader2 className="w-4 h-4 animate-spin mr-2" />

@@ -47,7 +47,7 @@ export function PriorityBadge({
   priority,
   size = 'md',
   showIcon = false,
-  className
+  className,
 }: PriorityBadgeProps) {
   const sizeClasses = {
     sm: 'px-1.5 py-0.5 text-xs',
@@ -84,13 +84,7 @@ interface SLABadgeProps {
   className?: string;
 }
 
-export function SLABadge({
-  createdAt,
-  priority,
-  status,
-  size = 'md',
-  className
-}: SLABadgeProps) {
+export function SLABadge({ createdAt, priority, status, size = 'md', className }: SLABadgeProps) {
   // Don't show SLA for completed/cancelled/rejected requests
   if (['completed', 'cancelled', 'rejected'].includes(status)) {
     return null;

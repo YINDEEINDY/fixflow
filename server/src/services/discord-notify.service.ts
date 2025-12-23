@@ -93,7 +93,11 @@ export async function notifyNewRequest(request: {
         fields: [
           { name: 'เลขที่', value: request.requestNumber, inline: true },
           { name: 'หมวดหมู่', value: request.category, inline: true },
-          { name: 'ความเร่งด่วน', value: priorityLabels[request.priority] || request.priority, inline: true },
+          {
+            name: 'ความเร่งด่วน',
+            value: priorityLabels[request.priority] || request.priority,
+            inline: true,
+          },
           { name: 'สถานที่', value: request.location, inline: false },
           { name: 'ผู้แจ้ง', value: request.userName, inline: true },
         ],

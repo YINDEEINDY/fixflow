@@ -10,12 +10,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === 'user';
 
   return (
-    <div
-      className={cn(
-        'flex gap-3 mb-4',
-        isUser && 'flex-row-reverse'
-      )}
-    >
+    <div className={cn('flex gap-3 mb-4', isUser && 'flex-row-reverse')}>
       {/* Avatar */}
       <div
         className={cn(

@@ -34,9 +34,7 @@ export interface RecentRequest {
 }
 
 export const dashboardApi = {
-  getStats: <T = UserStats | TechnicianStats | AdminStats>() =>
-    api.get<T>('/dashboard/stats'),
+  getStats: <T = UserStats | TechnicianStats | AdminStats>() => api.get<T>('/dashboard/stats'),
 
-  getRecentRequests: (limit = 5) =>
-    api.get<RecentRequest[]>(`/dashboard/recent?limit=${limit}`),
+  getRecentRequests: (limit = 5) => api.get<RecentRequest[]>(`/dashboard/recent?limit=${limit}`),
 };

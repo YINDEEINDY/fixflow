@@ -111,9 +111,7 @@ export default function RequestList() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             {isAdmin ? 'รายการแจ้งซ่อมทั้งหมด' : 'รายการแจ้งซ่อมของฉัน'}
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            ทั้งหมด {pagination.total} รายการ
-          </p>
+          <p className="text-gray-600 dark:text-gray-400">ทั้งหมด {pagination.total} รายการ</p>
         </div>
         {user?.role === 'user' && (
           <Link to="/requests/new">
@@ -140,10 +138,7 @@ export default function RequestList() {
                 <Search className="w-4 h-4" />
               </Button>
             </div>
-            <Button
-              variant="outline"
-              onClick={() => setShowFilters(!showFilters)}
-            >
+            <Button variant="outline" onClick={() => setShowFilters(!showFilters)}>
               <Filter className="w-4 h-4 mr-2" />
               ตัวกรอง
             </Button>
@@ -159,7 +154,7 @@ export default function RequestList() {
                   className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   value={filters.status || ''}
                   onChange={(e) =>
-                    handleStatusFilter(e.target.value as RequestStatus || undefined)
+                    handleStatusFilter((e.target.value as RequestStatus) || undefined)
                   }
                 >
                   <option value="">ทั้งหมด</option>
@@ -177,9 +172,7 @@ export default function RequestList() {
                 <select
                   className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   value={filters.priority || ''}
-                  onChange={(e) =>
-                    handlePriorityFilter(e.target.value as Priority || undefined)
-                  }
+                  onChange={(e) => handlePriorityFilter((e.target.value as Priority) || undefined)}
                 >
                   <option value="">ทั้งหมด</option>
                   {Object.entries(priorityLabels).map(([value, label]) => (
@@ -196,9 +189,7 @@ export default function RequestList() {
                 <select
                   className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   value={filters.categoryId || ''}
-                  onChange={(e) =>
-                    handleCategoryFilter(e.target.value || undefined)
-                  }
+                  onChange={(e) => handleCategoryFilter(e.target.value || undefined)}
                 >
                   <option value="">ทั้งหมด</option>
                   {categories.map((cat) => (
@@ -276,9 +267,7 @@ export default function RequestList() {
                       )}
                     </div>
                     <div className="flex items-center gap-2">
-                      <AlertTriangle
-                        className={`w-5 h-5 ${priorityColors[request.priority]}`}
-                      />
+                      <AlertTriangle className={`w-5 h-5 ${priorityColors[request.priority]}`} />
                     </div>
                   </div>
                 </CardContent>

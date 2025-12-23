@@ -54,9 +54,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         )}
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            ชื่อผู้ใช้
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ใช้</label>
           <input
             type="text"
             value={username}
@@ -68,9 +66,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            รหัสผ่าน
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน</label>
           <input
             type="password"
             value={password}

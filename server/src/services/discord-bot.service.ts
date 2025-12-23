@@ -131,10 +131,16 @@ export async function createRequestChannel(request: {
           color: priorityColors[request.priority] || COLORS.info,
           fields: [
             { name: 'หมวดหมู่', value: request.category, inline: true },
-            { name: 'ความเร่งด่วน', value: priorityLabels[request.priority] || request.priority, inline: true },
+            {
+              name: 'ความเร่งด่วน',
+              value: priorityLabels[request.priority] || request.priority,
+              inline: true,
+            },
             { name: 'สถานที่', value: request.location, inline: false },
             { name: 'ผู้แจ้ง', value: request.userName, inline: true },
-            ...(request.description ? [{ name: 'รายละเอียด', value: request.description, inline: false }] : []),
+            ...(request.description
+              ? [{ name: 'รายละเอียด', value: request.description, inline: false }]
+              : []),
           ],
           timestamp: new Date().toISOString(),
           footer: { text: 'FixFlow Maintenance System' },
@@ -225,7 +231,10 @@ export async function renameChannel(channelId: string, newName: string): Promise
 }
 
 // Archive channel by moving to archive category or adding prefix
-export async function archiveChannel(channelId: string, archiveCategoryId?: string): Promise<boolean> {
+export async function archiveChannel(
+  channelId: string,
+  archiveCategoryId?: string
+): Promise<boolean> {
   try {
     const updates: Record<string, unknown> = {};
 
@@ -256,7 +265,9 @@ export async function getGuildChannels(): Promise<DiscordChannel[]> {
     const config = await getDiscordConfig();
     if (!config.guildId) return [];
 
-    const channels = (await discordApiRequest(`/guilds/${config.guildId}/channels`)) as DiscordChannel[];
+    const channels = (await discordApiRequest(
+      `/guilds/${config.guildId}/channels`
+    )) as DiscordChannel[];
     return channels;
   } catch (error) {
     console.error('Failed to get guild channels:', error);
@@ -265,7 +276,11 @@ export async function getGuildChannels(): Promise<DiscordChannel[]> {
 }
 
 // Test bot connection
-export async function testBotConnection(): Promise<{ success: boolean; message: string; guilds?: string[] }> {
+export async function testBotConnection(): Promise<{
+  success: boolean;
+  message: string;
+  guilds?: string[];
+}> {
   try {
     const config = await getDiscordConfig();
 
@@ -326,7 +341,11 @@ export async function notifyNewRequest(request: {
         fields: [
           { name: 'เลขที่', value: request.requestNumber, inline: true },
           { name: 'หมวดหมู่', value: request.category, inline: true },
-          { name: 'ความเร่งด่วน', value: priorityLabels[request.priority] || request.priority, inline: true },
+          {
+            name: 'ความเร่งด่วน',
+            value: priorityLabels[request.priority] || request.priority,
+            inline: true,
+          },
           { name: 'สถานที่', value: request.location, inline: false },
           { name: 'ผู้แจ้ง', value: request.userName, inline: true },
         ],

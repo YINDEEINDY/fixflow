@@ -97,7 +97,10 @@ export default function Settings() {
       if (response.success) {
         setMessage({ type: 'success', text: 'ส่งข้อความทดสอบ Discord สำเร็จ' });
       } else {
-        setMessage({ type: 'error', text: response.error?.message || 'ไม่สามารถส่งข้อความทดสอบได้' });
+        setMessage({
+          type: 'error',
+          text: response.error?.message || 'ไม่สามารถส่งข้อความทดสอบได้',
+        });
       }
     } catch (err) {
       setMessage({ type: 'error', text: 'เกิดข้อผิดพลาดในการทดสอบ' });
@@ -118,7 +121,10 @@ export default function Settings() {
           setBotGuilds(response.data.guilds);
         }
       } else {
-        setMessage({ type: 'error', text: response.error?.message || 'ไม่สามารถเชื่อมต่อ Bot ได้' });
+        setMessage({
+          type: 'error',
+          text: response.error?.message || 'ไม่สามารถเชื่อมต่อ Bot ได้',
+        });
       }
     } catch (err) {
       setMessage({ type: 'error', text: 'เกิดข้อผิดพลาดในการทดสอบ Bot' });
@@ -163,11 +169,7 @@ export default function Settings() {
   }
 
   if (!settings) {
-    return (
-      <div className="text-center py-12 text-gray-500">
-        ไม่สามารถโหลดการตั้งค่าได้
-      </div>
-    );
+    return <div className="text-center py-12 text-gray-500">ไม่สามารถโหลดการตั้งค่าได้</div>;
   }
 
   return (
@@ -195,9 +197,7 @@ export default function Settings() {
       {message && (
         <div
           className={`flex items-center gap-2 p-4 rounded-lg ${
-            message.type === 'success'
-              ? 'bg-green-50 text-green-700'
-              : 'bg-red-50 text-red-700'
+            message.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
           }`}
         >
           {message.type === 'success' ? (
@@ -225,9 +225,7 @@ export default function Settings() {
               onChange={(e) => updateSetting('siteName', e.target.value)}
             />
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                คำอธิบายระบบ
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">คำอธิบายระบบ</label>
               <textarea
                 value={settings.siteDescription}
                 onChange={(e) => updateSetting('siteDescription', e.target.value)}
@@ -398,7 +396,9 @@ export default function Settings() {
                       </label>
                       <select
                         value={settings.discordNotifyChannelId || ''}
-                        onChange={(e) => updateSetting('discordNotifyChannelId', e.target.value || null)}
+                        onChange={(e) =>
+                          updateSetting('discordNotifyChannelId', e.target.value || null)
+                        }
                         className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
                       >
                         <option value="">-- ใช้ Webhook แทน --</option>
@@ -501,9 +501,7 @@ export default function Settings() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                วันทำการ
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">วันทำการ</label>
               <div className="flex flex-wrap gap-2">
                 {DAYS_OF_WEEK.map((day) => (
                   <button

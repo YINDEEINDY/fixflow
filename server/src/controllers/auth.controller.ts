@@ -48,10 +48,14 @@ export async function register(req: Request, res: Response): Promise<void> {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    sendSuccess(res, {
-      user: result.user,
-      accessToken: result.accessToken,
-    }, 201);
+    sendSuccess(
+      res,
+      {
+        user: result.user,
+        accessToken: result.accessToken,
+      },
+      201
+    );
   } catch (error) {
     if (error instanceof z.ZodError) {
       const details = error.issues.map((e) => ({
@@ -150,7 +154,7 @@ export async function lineLogin(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const tokenData = await tokenResponse.json() as { access_token: string; id_token?: string };
+    const tokenData = (await tokenResponse.json()) as { access_token: string; id_token?: string };
 
     // Get user profile from LINE
     const profileResponse = await fetch('https://api.line.me/v2/profile', {
@@ -164,7 +168,7 @@ export async function lineLogin(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const profile = await profileResponse.json() as {
+    const profile = (await profileResponse.json()) as {
       userId: string;
       displayName: string;
       pictureUrl?: string;

@@ -57,7 +57,9 @@ export const templateApi = {
 
   // Get popular templates
   getPopular: async (limit: number = 5): Promise<ApiResponse<RequestTemplate[]>> => {
-    const response = await apiClient.get<ApiResponse<RequestTemplate[]>>(`/templates/popular?limit=${limit}`);
+    const response = await apiClient.get<ApiResponse<RequestTemplate[]>>(
+      `/templates/popular?limit=${limit}`
+    );
     return response.data;
   },
 
@@ -69,7 +71,9 @@ export const templateApi = {
 
   // Get templates by category
   getByCategory: async (categoryId: string): Promise<ApiResponse<RequestTemplate[]>> => {
-    const response = await apiClient.get<ApiResponse<RequestTemplate[]>>(`/templates/category/${categoryId}`);
+    const response = await apiClient.get<ApiResponse<RequestTemplate[]>>(
+      `/templates/category/${categoryId}`
+    );
     return response.data;
   },
 

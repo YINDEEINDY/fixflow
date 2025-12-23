@@ -16,7 +16,7 @@ async function main() {
   await pool.end();
   console.log('Done');
 }
-main().catch(e => {
+main().catch((e) => {
   console.error('Error name:', e.name);
   console.error('Error message:', e.message);
   process.exit(1);

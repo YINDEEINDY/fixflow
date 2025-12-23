@@ -15,7 +15,12 @@ import {
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
-import { adminApi, type AdminUser, type CreateUserInput, type UpdateUserInput } from '../../api/admin';
+import {
+  adminApi,
+  type AdminUser,
+  type CreateUserInput,
+  type UpdateUserInput,
+} from '../../api/admin';
 import type { Role } from '../../types/index';
 
 const roleLabels: Record<Role, string> = {
@@ -139,7 +144,8 @@ export default function UsersManagement() {
   };
 
   const handleDelete = async (user: AdminUser) => {
-    if (!confirm(`คุณแน่ใจหรือไม่ที่จะลบผู้ใช้ "${user.name}"? การลบนี้ไม่สามารถย้อนกลับได้`)) return;
+    if (!confirm(`คุณแน่ใจหรือไม่ที่จะลบผู้ใช้ "${user.name}"? การลบนี้ไม่สามารถย้อนกลับได้`))
+      return;
 
     try {
       const response = await adminApi.users.delete(user.id);
@@ -209,9 +215,7 @@ export default function UsersManagement() {
               <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
             </div>
           ) : users.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              ไม่พบผู้ใช้
-            </div>
+            <div className="text-center py-12 text-gray-500">ไม่พบผู้ใช้</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -222,7 +226,9 @@ export default function UsersManagement() {
                     <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">บทบาท</th>
                     <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">แผนก</th>
                     <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">สถานะ</th>
-                    <th className="text-right px-4 py-3 text-sm font-medium text-gray-600">จัดการ</th>
+                    <th className="text-right px-4 py-3 text-sm font-medium text-gray-600">
+                      จัดการ
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
@@ -242,7 +248,9 @@ export default function UsersManagement() {
                       </td>
                       <td className="px-4 py-3 text-gray-600">{user.email || '-'}</td>
                       <td className="px-4 py-3">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${roleColors[user.role]}`}>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${roleColors[user.role]}`}
+                        >
                           {roleLabels[user.role]}
                         </span>
                       </td>
@@ -268,7 +276,11 @@ export default function UsersManagement() {
                             size="sm"
                             onClick={() => handleToggleActive(user)}
                           >
-                            {user.isActive ? <UserX className="w-4 h-4" /> : <UserCheck className="w-4 h-4" />}
+                            {user.isActive ? (
+                              <UserX className="w-4 h-4" />
+                            ) : (
+                              <UserCheck className="w-4 h-4" />
+                            )}
                           </Button>
                           <Button
                             variant="ghost"

@@ -10,7 +10,11 @@ interface TemplateSelectorProps {
   className?: string;
 }
 
-export function TemplateSelector({ onSelect, selectedCategoryId, className }: TemplateSelectorProps) {
+export function TemplateSelector({
+  onSelect,
+  selectedCategoryId,
+  className,
+}: TemplateSelectorProps) {
   const [templates, setTemplates] = useState<RequestTemplate[]>([]);
   const [popularTemplates, setPopularTemplates] = useState<RequestTemplate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -53,15 +57,16 @@ export function TemplateSelector({ onSelect, selectedCategoryId, className }: Te
     }
   }
 
-  const filteredTemplates = selectedCategoryId && activeTab === 'category'
-    ? templates.filter(t => t.categoryId === selectedCategoryId)
-    : activeTab === 'popular'
-    ? popularTemplates
-    : templates;
+  const filteredTemplates =
+    selectedCategoryId && activeTab === 'category'
+      ? templates.filter((t) => t.categoryId === selectedCategoryId)
+      : activeTab === 'popular'
+        ? popularTemplates
+        : templates;
 
   if (isLoading) {
     return (
-      <div className={cn("flex items-center justify-center py-8", className)}>
+      <div className={cn('flex items-center justify-center py-8', className)}>
         <Loader2 className="w-6 h-6 animate-spin text-primary-500" />
       </div>
     );
@@ -72,12 +77,10 @@ export function TemplateSelector({ onSelect, selectedCategoryId, className }: Te
   }
 
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn('space-y-4', className)}>
       <div className="flex items-center gap-2 text-sm">
         <Zap className="w-4 h-4 text-yellow-500" />
-        <span className="font-medium text-gray-700 dark:text-gray-300">
-          เลือกจาก Template
-        </span>
+        <span className="font-medium text-gray-700 dark:text-gray-300">เลือกจาก Template</span>
       </div>
 
       {/* Tabs */}
@@ -85,10 +88,10 @@ export function TemplateSelector({ onSelect, selectedCategoryId, className }: Te
         <button
           onClick={() => setActiveTab('popular')}
           className={cn(
-            "px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors",
+            'px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
             activeTab === 'popular'
-              ? "border-primary-500 text-primary-600 dark:text-primary-400"
-              : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400"
+              ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+              : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'
           )}
         >
           <Star className="w-4 h-4 inline mr-1" />
@@ -97,10 +100,10 @@ export function TemplateSelector({ onSelect, selectedCategoryId, className }: Te
         <button
           onClick={() => setActiveTab('all')}
           className={cn(
-            "px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors",
+            'px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
             activeTab === 'all'
-              ? "border-primary-500 text-primary-600 dark:text-primary-400"
-              : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400"
+              ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+              : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'
           )}
         >
           <FileText className="w-4 h-4 inline mr-1" />
@@ -110,10 +113,10 @@ export function TemplateSelector({ onSelect, selectedCategoryId, className }: Te
           <button
             onClick={() => setActiveTab('category')}
             className={cn(
-              "px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors",
+              'px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
               activeTab === 'category'
-                ? "border-primary-500 text-primary-600 dark:text-primary-400"
-                : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400"
+                ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'
             )}
           >
             หมวดหมู่นี้
@@ -145,10 +148,12 @@ export function TemplateSelector({ onSelect, selectedCategoryId, className }: Te
                   <span className="font-medium text-gray-900 dark:text-white truncate">
                     {template.name}
                   </span>
-                  <span className={cn(
-                    "px-1.5 py-0.5 text-xs rounded-full",
-                    getPriorityBadgeColor(template.priority)
-                  )}>
+                  <span
+                    className={cn(
+                      'px-1.5 py-0.5 text-xs rounded-full',
+                      getPriorityBadgeColor(template.priority)
+                    )}
+                  >
                     {getPriorityLabel(template.priority)}
                   </span>
                 </div>

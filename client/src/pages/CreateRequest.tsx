@@ -17,14 +17,8 @@ const priorityOptions: { value: Priority; label: string; description: string }[]
 
 export default function CreateRequest() {
   const navigate = useNavigate();
-  const {
-    categories,
-    locations,
-    isSubmitting,
-    fetchCategories,
-    fetchLocations,
-    createRequest,
-  } = useRequestStore();
+  const { categories, locations, isSubmitting, fetchCategories, fetchLocations, createRequest } =
+    useRequestStore();
 
   const [formData, setFormData] = useState({
     categoryId: '',
@@ -205,17 +199,13 @@ export default function CreateRequest() {
 
             {/* Priority */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                ความเร่งด่วน
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">ความเร่งด่วน</label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {priorityOptions.map((option) => (
                   <button
                     key={option.value}
                     type="button"
-                    onClick={() =>
-                      setFormData((prev) => ({ ...prev, priority: option.value }))
-                    }
+                    onClick={() => setFormData((prev) => ({ ...prev, priority: option.value }))}
                     className={`p-3 rounded-lg border text-left transition-colors ${
                       formData.priority === option.value
                         ? 'border-primary-500 bg-primary-50 text-primary-700'
@@ -232,9 +222,7 @@ export default function CreateRequest() {
             {/* Preferred Date & Time */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  วันที่สะดวก
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">วันที่สะดวก</label>
                 <Input
                   type="date"
                   name="preferredDate"
@@ -244,9 +232,7 @@ export default function CreateRequest() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  เวลาที่สะดวก
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">เวลาที่สะดวก</label>
                 <select
                   name="preferredTime"
                   value={formData.preferredTime}
@@ -273,12 +259,7 @@ export default function CreateRequest() {
 
         {/* Submit Button */}
         <div className="flex gap-4">
-          <Button
-            type="button"
-            variant="outline"
-            className="flex-1"
-            onClick={() => navigate(-1)}
-          >
+          <Button type="button" variant="outline" className="flex-1" onClick={() => navigate(-1)}>
             ยกเลิก
           </Button>
           <Button type="submit" className="flex-1" disabled={isSubmitting}>

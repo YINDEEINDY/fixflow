@@ -91,7 +91,11 @@ export async function markAllAsRead(userId: string) {
 }
 
 // Helper functions to create specific notifications
-export async function notifyRequestAssigned(requestId: string, technicianUserId: string, requestNumber: string) {
+export async function notifyRequestAssigned(
+  requestId: string,
+  technicianUserId: string,
+  requestNumber: string
+) {
   return createNotification({
     userId: technicianUserId,
     type: 'request_assigned',
@@ -101,7 +105,11 @@ export async function notifyRequestAssigned(requestId: string, technicianUserId:
   });
 }
 
-export async function notifyRequestAccepted(requestId: string, requesterUserId: string, requestNumber: string) {
+export async function notifyRequestAccepted(
+  requestId: string,
+  requesterUserId: string,
+  requestNumber: string
+) {
   return createNotification({
     userId: requesterUserId,
     type: 'request_accepted',
@@ -111,7 +119,11 @@ export async function notifyRequestAccepted(requestId: string, requesterUserId: 
   });
 }
 
-export async function notifyRequestStarted(requestId: string, requesterUserId: string, requestNumber: string) {
+export async function notifyRequestStarted(
+  requestId: string,
+  requesterUserId: string,
+  requestNumber: string
+) {
   return createNotification({
     userId: requesterUserId,
     type: 'request_started',
@@ -121,7 +133,11 @@ export async function notifyRequestStarted(requestId: string, requesterUserId: s
   });
 }
 
-export async function notifyRequestCompleted(requestId: string, requesterUserId: string, requestNumber: string) {
+export async function notifyRequestCompleted(
+  requestId: string,
+  requesterUserId: string,
+  requestNumber: string
+) {
   return createNotification({
     userId: requesterUserId,
     type: 'request_completed',

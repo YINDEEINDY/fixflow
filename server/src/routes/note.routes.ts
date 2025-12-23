@@ -17,10 +17,6 @@ router.post(
 );
 
 // Delete note (technician only)
-router.delete(
-  '/notes/:noteId',
-  authorize('technician', 'admin'),
-  noteController.deleteNote
-);
+router.delete('/notes/:noteId', authorize('technician', 'admin'), noteController.deleteNote);
 
 export default router;

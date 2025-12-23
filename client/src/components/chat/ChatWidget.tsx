@@ -43,7 +43,8 @@ export function ChatWidget() {
           {
             id: 'welcome',
             role: 'assistant',
-            content: 'สวัสดีครับ! ผมคือ FixFlow AI Assistant ผมพร้อมช่วยเหลือคุณเกี่ยวกับการแจ้งซ่อมและการใช้งานระบบครับ\n\nคุณสามารถถามผมได้เช่น:\n- วิธีแจ้งซ่อมทำอย่างไร?\n- สถานะงานของฉันเป็นอย่างไร?\n- ระดับความเร่งด่วนมีอะไรบ้าง?',
+            content:
+              'สวัสดีครับ! ผมคือ FixFlow AI Assistant ผมพร้อมช่วยเหลือคุณเกี่ยวกับการแจ้งซ่อมและการใช้งานระบบครับ\n\nคุณสามารถถามผมได้เช่น:\n- วิธีแจ้งซ่อมทำอย่างไร?\n- สถานะงานของฉันเป็นอย่างไร?\n- ระดับความเร่งด่วนมีอะไรบ้าง?',
             timestamp: new Date().toISOString(),
           },
         ]);
@@ -55,7 +56,8 @@ export function ChatWidget() {
         {
           id: 'welcome',
           role: 'assistant',
-          content: 'สวัสดีครับ! ผมคือ FixFlow AI Assistant ผมพร้อมช่วยเหลือคุณเกี่ยวกับการแจ้งซ่อมและการใช้งานระบบครับ',
+          content:
+            'สวัสดีครับ! ผมคือ FixFlow AI Assistant ผมพร้อมช่วยเหลือคุณเกี่ยวกับการแจ้งซ่อมและการใช้งานระบบครับ',
           timestamp: new Date().toISOString(),
         },
       ]);
@@ -170,9 +172,18 @@ export function ChatWidget() {
                   </div>
                   <div className="flex-1 max-w-[80%] px-4 py-3 rounded-2xl rounded-tl-sm bg-gray-100 dark:bg-gray-700">
                     <div className="flex gap-1">
-                      <span className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <span className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <span className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      <span
+                        className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"
+                        style={{ animationDelay: '0ms' }}
+                      />
+                      <span
+                        className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"
+                        style={{ animationDelay: '150ms' }}
+                      />
+                      <span
+                        className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"
+                        style={{ animationDelay: '300ms' }}
+                      />
                     </div>
                   </div>
                 </div>

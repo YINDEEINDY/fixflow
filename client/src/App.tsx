@@ -99,22 +99,91 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-      <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
-      <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
-      <Route path="/reset-password" element={<PublicRoute><ResetPassword /></PublicRoute>} />
-      <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/forgot-password"
+        element={
+          <PublicRoute>
+            <ForgotPassword />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/reset-password"
+        element={
+          <PublicRoute>
+            <ResetPassword />
+          </PublicRoute>
+        }
+      />
+      <Route
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route path="/" element={<Dashboard />} />
         <Route path="/requests" element={<RequestList />} />
         <Route path="/requests/new" element={<CreateRequest />} />
         <Route path="/requests/:id" element={<RequestDetail />} />
         <Route path="/jobs" element={<TechnicianJobs />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/admin/users" element={<AdminRoute><UsersManagement /></AdminRoute>} />
-        <Route path="/admin/categories" element={<AdminRoute><CategoriesManagement /></AdminRoute>} />
-        <Route path="/admin/locations" element={<AdminRoute><LocationsManagement /></AdminRoute>} />
-        <Route path="/admin/reports" element={<AdminRoute><Reports /></AdminRoute>} />
-        <Route path="/admin/settings" element={<AdminRoute><Settings /></AdminRoute>} />
+        <Route
+          path="/admin/users"
+          element={
+            <AdminRoute>
+              <UsersManagement />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/categories"
+          element={
+            <AdminRoute>
+              <CategoriesManagement />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/locations"
+          element={
+            <AdminRoute>
+              <LocationsManagement />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/reports"
+          element={
+            <AdminRoute>
+              <Reports />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/settings"
+          element={
+            <AdminRoute>
+              <Settings />
+            </AdminRoute>
+          }
+        />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

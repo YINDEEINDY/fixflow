@@ -9,12 +9,10 @@ export interface CreateNoteInput {
 }
 
 export const notesApi = {
-  getByRequestId: (requestId: string) =>
-    api.get<JobNote[]>(`/requests/${requestId}/notes`),
+  getByRequestId: (requestId: string) => api.get<JobNote[]>(`/requests/${requestId}/notes`),
 
   create: (requestId: string, input: CreateNoteInput) =>
     api.post<JobNote>(`/requests/${requestId}/notes`, input),
 
-  delete: (noteId: string) =>
-    api.delete<{ message: string }>(`/notes/${noteId}`),
+  delete: (noteId: string) => api.delete<{ message: string }>(`/notes/${noteId}`),
 };

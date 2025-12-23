@@ -1,12 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { sendError } from '../utils/response.js';
 
-export function errorHandler(
-  err: Error,
-  _req: Request,
-  res: Response,
-  _next: NextFunction
-): void {
+export function errorHandler(err: Error, _req: Request, res: Response, _next: NextFunction): void {
   console.error('Error:', err);
 
   if (err.name === 'PrismaClientKnownRequestError') {

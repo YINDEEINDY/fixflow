@@ -1,14 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  Wrench,
-  Clock,
-  CheckCircle,
-  AlertTriangle,
-  Play,
-  MapPin,
-  Calendar,
-} from 'lucide-react';
+import { Wrench, Clock, CheckCircle, AlertTriangle, Play, MapPin, Calendar } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent } from '../components/ui/Card';
 import { useRequestStore } from '../stores/request.store';
@@ -53,17 +45,13 @@ export default function TechnicianJobs() {
   }, [fetchRequests]);
 
   // Filter requests for current technician
-  const myJobs = requests.filter(
-    (r) => r.technician?.user.id === user?.id
-  );
+  const myJobs = requests.filter((r) => r.technician?.user.id === user?.id);
 
   const pendingJobs = myJobs.filter((r) => r.status === 'assigned');
   const activeJobs = myJobs.filter((r) =>
     ['accepted', 'in_progress', 'on_hold'].includes(r.status)
   );
-  const completedJobs = myJobs.filter((r) =>
-    ['completed', 'rejected'].includes(r.status)
-  );
+  const completedJobs = myJobs.filter((r) => ['completed', 'rejected'].includes(r.status));
 
   const getJobsByTab = (): Request[] => {
     switch (activeTab) {
@@ -90,7 +78,12 @@ export default function TechnicianJobs() {
   const tabs = [
     { id: 'pending' as TabType, label: 'รอรับงาน', count: pendingJobs.length, icon: Clock },
     { id: 'active' as TabType, label: 'กำลังทำ', count: activeJobs.length, icon: Play },
-    { id: 'completed' as TabType, label: 'เสร็จแล้ว', count: completedJobs.length, icon: CheckCircle },
+    {
+      id: 'completed' as TabType,
+      label: 'เสร็จแล้ว',
+      count: completedJobs.length,
+      icon: CheckCircle,
+    },
   ];
 
   return (
@@ -181,9 +174,7 @@ export default function TechnicianJobs() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-sm text-gray-500">
-                          {job.requestNumber}
-                        </span>
+                        <span className="text-sm text-gray-500">{job.requestNumber}</span>
                         <span
                           className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                             statusColors[job.status]
@@ -191,9 +182,7 @@ export default function TechnicianJobs() {
                         >
                           {statusLabels[job.status]}
                         </span>
-                        <AlertTriangle
-                          className={`w-4 h-4 ${priorityColors[job.priority]}`}
-                        />
+                        <AlertTriangle className={`w-4 h-4 ${priorityColors[job.priority]}`} />
                       </div>
                       <h3 className="font-medium text-gray-900">{job.title}</h3>
                       <div className="mt-2 flex flex-wrap gap-3 text-sm text-gray-500">
@@ -207,13 +196,9 @@ export default function TechnicianJobs() {
                           {formatDate(job.createdAt)}
                         </span>
                       </div>
-                      <p className="mt-1 text-sm text-gray-500">
-                        ผู้แจ้ง: {job.user.name}
-                      </p>
+                      <p className="mt-1 text-sm text-gray-500">ผู้แจ้ง: {job.user.name}</p>
                     </div>
-                    {activeTab === 'pending' && (
-                      <Button size="sm">รับงาน</Button>
-                    )}
+                    {activeTab === 'pending' && <Button size="sm">รับงาน</Button>}
                     {activeTab === 'active' && job.status === 'accepted' && (
                       <Button size="sm">เริ่มงาน</Button>
                     )}

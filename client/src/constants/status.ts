@@ -84,10 +84,10 @@ export const PRIORITY_BADGE_COLORS: Record<string, string> = {
 
 // SLA Configuration (in hours)
 export const SLA_HOURS: Record<string, number> = {
-  low: 72,      // 3 days
-  normal: 48,   // 2 days
-  high: 24,     // 1 day
-  urgent: 4,    // 4 hours
+  low: 72, // 3 days
+  normal: 48, // 2 days
+  high: 24, // 1 day
+  urgent: 4, // 4 hours
 };
 
 // Helper functions
@@ -129,7 +129,10 @@ export function isSLABreached(createdAt: Date | string, priority: string): boole
 }
 
 // Get SLA status
-export function getSLAStatus(createdAt: Date | string, priority: string): 'ok' | 'warning' | 'breached' {
+export function getSLAStatus(
+  createdAt: Date | string,
+  priority: string
+): 'ok' | 'warning' | 'breached' {
   const deadline = calculateSLADeadline(createdAt, priority);
   const now = new Date();
   const hoursLeft = (deadline.getTime() - now.getTime()) / (1000 * 60 * 60);

@@ -41,29 +41,35 @@ export default function Register() {
     resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = useCallback(async (data: RegisterForm) => {
-    setError(null);
-    setIsLoading(true);
+  const onSubmit = useCallback(
+    async (data: RegisterForm) => {
+      setError(null);
+      setIsLoading(true);
 
-    try {
-      let recaptchaToken: string | undefined;
-      if (executeRecaptcha) {
-        recaptchaToken = await executeRecaptcha('register');
+      try {
+        let recaptchaToken: string | undefined;
+        if (executeRecaptcha) {
+          recaptchaToken = await executeRecaptcha('register');
+        }
+        await registerUser(
+          {
+            name: data.name,
+            email: data.email,
+            password: data.password,
+            phone: data.phone,
+            department: data.department,
+          },
+          recaptchaToken
+        );
+        navigate('/');
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'สมัครสมาชิกไม่สำเร็จ');
+      } finally {
+        setIsLoading(false);
       }
-      await registerUser({
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        phone: data.phone,
-        department: data.department,
-      }, recaptchaToken);
-      navigate('/');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'สมัครสมาชิกไม่สำเร็จ');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [executeRecaptcha, registerUser, navigate]);
+    },
+    [executeRecaptcha, registerUser, navigate]
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center p-4">

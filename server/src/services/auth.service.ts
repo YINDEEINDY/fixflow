@@ -1,7 +1,12 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { prisma } from '../config/db.js';
-import { generateAccessToken, generateRefreshToken, verifyRefreshToken, getRefreshTokenExpiry } from '../utils/jwt.js';
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyRefreshToken,
+  getRefreshTokenExpiry,
+} from '../utils/jwt.js';
 import { Role } from '@prisma/client';
 import { sendPasswordResetEmail } from './email.service.js';
 

@@ -73,11 +73,9 @@ export const requestsApi = {
 
   getById: (id: string) => api.get<Request>(`/requests/${id}`),
 
-  update: (id: string, input: UpdateRequestInput) =>
-    api.put<Request>(`/requests/${id}`, input),
+  update: (id: string, input: UpdateRequestInput) => api.put<Request>(`/requests/${id}`, input),
 
-  cancel: (id: string, reason?: string) =>
-    api.post<Request>(`/requests/${id}/cancel`, { reason }),
+  cancel: (id: string, reason?: string) => api.post<Request>(`/requests/${id}/cancel`, { reason }),
 
   // Admin actions
   assign: (id: string, technicianId: string, note?: string) =>
@@ -86,11 +84,9 @@ export const requestsApi = {
   // Technician actions
   accept: (id: string) => api.post<Request>(`/requests/${id}/accept`),
 
-  reject: (id: string, reason: string) =>
-    api.post<Request>(`/requests/${id}/reject`, { reason }),
+  reject: (id: string, reason: string) => api.post<Request>(`/requests/${id}/reject`, { reason }),
 
   start: (id: string) => api.post<Request>(`/requests/${id}/start`),
 
-  complete: (id: string, note?: string) =>
-    api.post<Request>(`/requests/${id}/complete`, { note }),
+  complete: (id: string, note?: string) => api.post<Request>(`/requests/${id}/complete`, { note }),
 };

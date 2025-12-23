@@ -58,7 +58,10 @@ export async function changePassword(req: AuthRequest, res: Response) {
     if (!currentPassword || !newPassword) {
       return res.status(400).json({
         success: false,
-        error: { code: 'VALIDATION_ERROR', message: 'Current password and new password are required' },
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Current password and new password are required',
+        },
       });
     }
 
@@ -89,7 +92,10 @@ export async function changePassword(req: AuthRequest, res: Response) {
       if (error.message === 'NO_PASSWORD_SET') {
         return res.status(400).json({
           success: false,
-          error: { code: 'NO_PASSWORD', message: 'No password set for this account (LINE login only)' },
+          error: {
+            code: 'NO_PASSWORD',
+            message: 'No password set for this account (LINE login only)',
+          },
         });
       }
     }

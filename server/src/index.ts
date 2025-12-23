@@ -20,16 +20,20 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 // Middlewares
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: 'cross-origin' }, // Allow images to be loaded cross-origin
-}));
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' }, // Allow images to be loaded cross-origin
+  })
+);
 
 // Parse CORS origins (supports comma-separated list)
-const corsOrigins = env.CORS_ORIGIN.split(',').map(o => o.trim());
-app.use(cors({
-  origin: corsOrigins.length === 1 ? corsOrigins[0] : corsOrigins,
-  credentials: true,
-}));
+const corsOrigins = env.CORS_ORIGIN.split(',').map((o) => o.trim());
+app.use(
+  cors({
+    origin: corsOrigins.length === 1 ? corsOrigins[0] : corsOrigins,
+    credentials: true,
+  })
+);
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

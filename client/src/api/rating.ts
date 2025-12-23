@@ -15,8 +15,7 @@ export interface Rating {
 }
 
 export const ratingApi = {
-  getRating: (requestId: string) =>
-    api.get<Rating | null>(`/requests/${requestId}/rating`),
+  getRating: (requestId: string) => api.get<Rating | null>(`/requests/${requestId}/rating`),
 
   createRating: (requestId: string, score: number, comment?: string) =>
     api.post<Rating>(`/requests/${requestId}/rating`, { score, comment }),

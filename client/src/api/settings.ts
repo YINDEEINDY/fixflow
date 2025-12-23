@@ -35,15 +35,12 @@ export interface DiscordChannel {
 export const settingsApi = {
   getSettings: () => api.get<SystemSettings>('/settings'),
 
-  updateSettings: (input: Partial<SystemSettings>) =>
-    api.put<SystemSettings>('/settings', input),
+  updateSettings: (input: Partial<SystemSettings>) => api.put<SystemSettings>('/settings', input),
 
-  testDiscord: () =>
-    api.post<{ message: string }>('/settings/test-discord'),
+  testDiscord: () => api.post<{ message: string }>('/settings/test-discord'),
 
   testDiscordBot: () =>
     api.post<{ message: string; guilds?: string[] }>('/settings/test-discord-bot'),
 
-  getDiscordChannels: () =>
-    api.get<DiscordChannel[]>('/settings/discord-channels'),
+  getDiscordChannels: () => api.get<DiscordChannel[]>('/settings/discord-channels'),
 };

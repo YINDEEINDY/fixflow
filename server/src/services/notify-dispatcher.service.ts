@@ -148,8 +148,12 @@ export async function notifyRequestRejected(data: RequestRejectedData): Promise<
   );
 }
 
-export async function notifyRequestStatusChange(data: RequestStatusChangeData): Promise<DispatchResult> {
-  console.log(`[Notify] Status change: ${data.requestNumber} (${data.oldStatus} → ${data.newStatus})`);
+export async function notifyRequestStatusChange(
+  data: RequestStatusChangeData
+): Promise<DispatchResult> {
+  console.log(
+    `[Notify] Status change: ${data.requestNumber} (${data.oldStatus} → ${data.newStatus})`
+  );
   return dispatch(
     () => discordNotify.notifyRequestStatusChange(data),
     () => lineBotNotify.notifyRequestStatusChange(data)

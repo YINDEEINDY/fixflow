@@ -20,7 +20,9 @@ export const StatsCard: React.FC<StatsCardProps> = ({
 }) => {
   return (
     <div className="group bg-white rounded-2xl shadow-medium hover:shadow-strong p-6 flex items-start gap-4 border border-gray-100 transition-all duration-300 hover:scale-105 hover:-translate-y-1 animate-scale-in">
-      <div className={`${iconBgColor} p-4 rounded-xl shadow-soft group-hover:shadow-medium transition-all duration-300 group-hover:scale-110`}>
+      <div
+        className={`${iconBgColor} p-4 rounded-xl shadow-soft group-hover:shadow-medium transition-all duration-300 group-hover:scale-110`}
+      >
         <Icon className={`w-7 h-7 ${iconColor}`} />
       </div>
       <div className="flex-1">

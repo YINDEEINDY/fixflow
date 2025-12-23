@@ -6,12 +6,24 @@ import { RequestStatus, Priority } from '@prisma/client';
 export async function createRequest(req: AuthRequest, res: Response) {
   try {
     const userId = req.user!.userId;
-    const { categoryId, locationId, title, description, photos, priority, preferredDate, preferredTime } = req.body;
+    const {
+      categoryId,
+      locationId,
+      title,
+      description,
+      photos,
+      priority,
+      preferredDate,
+      preferredTime,
+    } = req.body;
 
     if (!categoryId || !locationId || !title) {
       return res.status(400).json({
         success: false,
-        error: { code: 'VALIDATION_ERROR', message: 'categoryId, locationId, and title are required' },
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'categoryId, locationId, and title are required',
+        },
       });
     }
 

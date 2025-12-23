@@ -7,10 +7,7 @@ export async function getNotifications(req: AuthRequest, res: Response) {
     const userId = req.user!.userId;
     const { unreadOnly } = req.query;
 
-    const notifications = await notificationService.getNotifications(
-      userId,
-      unreadOnly === 'true'
-    );
+    const notifications = await notificationService.getNotifications(userId, unreadOnly === 'true');
 
     return res.json({ success: true, data: notifications });
   } catch (error) {

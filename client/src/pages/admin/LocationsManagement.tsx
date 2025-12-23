@@ -1,15 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  MapPin,
-  Plus,
-  Edit,
-  Trash2,
-  Loader2,
-  X,
-  Check,
-  XCircle,
-  Building2,
-} from 'lucide-react';
+import { MapPin, Plus, Edit, Trash2, Loader2, X, Check, XCircle, Building2 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
@@ -130,7 +120,10 @@ export default function LocationsManagement() {
   };
 
   const formatLocation = (location: Location) => {
-    const parts = [location.floor && `ชั้น ${location.floor}`, location.room && `ห้อง ${location.room}`];
+    const parts = [
+      location.floor && `ชั้น ${location.floor}`,
+      location.room && `ห้อง ${location.room}`,
+    ];
     return parts.filter(Boolean).join(' ');
   };
 
@@ -182,23 +175,28 @@ export default function LocationsManagement() {
               <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
             </div>
           ) : filteredLocations.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              ยังไม่มีสถานที่
-            </div>
+            <div className="text-center py-12 text-gray-500">ยังไม่มีสถานที่</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50 border-b">
                   <tr>
                     <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">อาคาร</th>
-                    <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">ชั้น/ห้อง</th>
+                    <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">
+                      ชั้น/ห้อง
+                    </th>
                     <th className="text-left px-4 py-3 text-sm font-medium text-gray-600">สถานะ</th>
-                    <th className="text-right px-4 py-3 text-sm font-medium text-gray-600">จัดการ</th>
+                    <th className="text-right px-4 py-3 text-sm font-medium text-gray-600">
+                      จัดการ
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
                   {filteredLocations.map((location) => (
-                    <tr key={location.id} className={`hover:bg-gray-50 ${!location.isActive ? 'opacity-50' : ''}`}>
+                    <tr
+                      key={location.id}
+                      className={`hover:bg-gray-50 ${!location.isActive ? 'opacity-50' : ''}`}
+                    >
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center">
@@ -207,9 +205,7 @@ export default function LocationsManagement() {
                           <span className="font-medium">{location.building}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-gray-600">
-                        {formatLocation(location) || '-'}
-                      </td>
+                      <td className="px-4 py-3 text-gray-600">{formatLocation(location) || '-'}</td>
                       <td className="px-4 py-3">
                         {location.isActive ? (
                           <span className="text-green-600 flex items-center gap-1">
@@ -286,9 +282,7 @@ export default function LocationsManagement() {
             </CardHeader>
             <CardContent className="space-y-4">
               {error && (
-                <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm">
-                  {error}
-                </div>
+                <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm">{error}</div>
               )}
 
               <Input

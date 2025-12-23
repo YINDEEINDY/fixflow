@@ -40,7 +40,7 @@ export async function verifyRecaptcha(token: string, expectedAction?: string): P
       return false;
     }
 
-    const data = await response.json() as RecaptchaResponse;
+    const data = (await response.json()) as RecaptchaResponse;
 
     if (!data.success) {
       console.error('reCAPTCHA verification failed:', data['error-codes']);

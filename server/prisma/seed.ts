@@ -11,7 +11,13 @@ async function main() {
   const categoriesData = [
     { name: 'electrical', nameTh: 'ไฟฟ้า', icon: 'Zap', color: '#F59E0B', sortOrder: 1 },
     { name: 'plumbing', nameTh: 'ประปา', icon: 'Droplets', color: '#3B82F6', sortOrder: 2 },
-    { name: 'air_conditioning', nameTh: 'แอร์/เครื่องปรับอากาศ', icon: 'Wind', color: '#06B6D4', sortOrder: 3 },
+    {
+      name: 'air_conditioning',
+      nameTh: 'แอร์/เครื่องปรับอากาศ',
+      icon: 'Wind',
+      color: '#06B6D4',
+      sortOrder: 3,
+    },
     { name: 'computer', nameTh: 'คอมพิวเตอร์', icon: 'Monitor', color: '#8B5CF6', sortOrder: 4 },
     { name: 'network', nameTh: 'เครือข่าย/Internet', icon: 'Wifi', color: '#10B981', sortOrder: 5 },
     { name: 'furniture', nameTh: 'เฟอร์นิเจอร์', icon: 'Armchair', color: '#78716C', sortOrder: 6 },

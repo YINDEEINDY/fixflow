@@ -8,13 +8,7 @@ import { Role, RequestStatus } from '@prisma/client';
 
 export async function getUsers(req: AuthRequest, res: Response) {
   try {
-    const {
-      page = '1',
-      limit = '10',
-      role,
-      search,
-      isActive,
-    } = req.query;
+    const { page = '1', limit = '10', role, search, isActive } = req.query;
 
     const result = await adminService.getUsers({
       page: parseInt(page as string, 10),
@@ -61,7 +55,10 @@ export async function createUser(req: AuthRequest, res: Response) {
     if (!email || !password || !name || !role) {
       return res.status(400).json({
         success: false,
-        error: { code: 'VALIDATION_ERROR', message: 'email, password, name, and role are required' },
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'email, password, name, and role are required',
+        },
       });
     }
 
@@ -135,7 +132,10 @@ export async function deleteUser(req: AuthRequest, res: Response) {
     if (error instanceof Error && error.message === 'USER_HAS_REQUESTS') {
       return res.status(400).json({
         success: false,
-        error: { code: 'USER_HAS_REQUESTS', message: 'ไม่สามารถลบผู้ใช้ที่มีคำขอแจ้งซ่อมได้ กรุณาปิดใช้งานแทน' },
+        error: {
+          code: 'USER_HAS_REQUESTS',
+          message: 'ไม่สามารถลบผู้ใช้ที่มีคำขอแจ้งซ่อมได้ กรุณาปิดใช้งานแทน',
+        },
       });
     }
     console.error('Delete user error:', error);
@@ -398,7 +398,10 @@ export async function bulkAssignRequests(req: AuthRequest, res: Response) {
     if (!requestIds || !Array.isArray(requestIds) || requestIds.length === 0) {
       return res.status(400).json({
         success: false,
-        error: { code: 'VALIDATION_ERROR', message: 'requestIds is required and must be a non-empty array' },
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'requestIds is required and must be a non-empty array',
+        },
       });
     }
 
@@ -453,11 +456,23 @@ export async function bulkUpdateStatus(req: AuthRequest, res: Response) {
     if (!requestIds || !Array.isArray(requestIds) || requestIds.length === 0) {
       return res.status(400).json({
         success: false,
-        error: { code: 'VALIDATION_ERROR', message: 'requestIds is required and must be a non-empty array' },
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'requestIds is required and must be a non-empty array',
+        },
       });
     }
 
-    const validStatuses: RequestStatus[] = ['pending', 'assigned', 'accepted', 'in_progress', 'on_hold', 'completed', 'cancelled', 'rejected'];
+    const validStatuses: RequestStatus[] = [
+      'pending',
+      'assigned',
+      'accepted',
+      'in_progress',
+      'on_hold',
+      'completed',
+      'cancelled',
+      'rejected',
+    ];
     if (!status || !validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
@@ -495,7 +510,10 @@ export async function getRequestsByIds(req: AuthRequest, res: Response) {
     if (!ids || !Array.isArray(ids) || ids.length === 0) {
       return res.status(400).json({
         success: false,
-        error: { code: 'VALIDATION_ERROR', message: 'ids is required and must be a non-empty array' },
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'ids is required and must be a non-empty array',
+        },
       });
     }
 

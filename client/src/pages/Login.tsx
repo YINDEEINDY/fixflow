@@ -1,10 +1,10 @@
-import { useState, useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useCallback, useEffect } from 'react';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
-import { Wrench, Mail, Lock } from 'lucide-react';
+import { Wrench, Mail, Lock, Loader2 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
@@ -33,23 +33,26 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = useCallback(async (data: LoginForm) => {
-    setError(null);
-    setIsLoading(true);
+  const onSubmit = useCallback(
+    async (data: LoginForm) => {
+      setError(null);
+      setIsLoading(true);
 
-    try {
-      let recaptchaToken: string | undefined;
-      if (executeRecaptcha) {
-        recaptchaToken = await executeRecaptcha('login');
+      try {
+        let recaptchaToken: string | undefined;
+        if (executeRecaptcha) {
+          recaptchaToken = await executeRecaptcha('login');
+        }
+        await login(data.email, data.password, rememberMe, recaptchaToken);
+        navigate('/');
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'เข้าสู่ระบบไม่สำเร็จ');
+      } finally {
+        setIsLoading(false);
       }
-      await login(data.email, data.password, rememberMe, recaptchaToken);
-      navigate('/');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'เข้าสู่ระบบไม่สำเร็จ');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [executeRecaptcha, login, navigate, rememberMe]);
+    },
+    [executeRecaptcha, login, navigate, rememberMe]
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4 transition-colors">
@@ -109,7 +112,10 @@ export default function Login() {
                   onChange={(e) => setRememberMe(e.target.checked)}
                   className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700"
                 />
-                <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                <label
+                  htmlFor="rememberMe"
+                  className="ml-2 block text-sm text-gray-700 dark:text-gray-300"
+                >
                   จดจำฉันไว้
                 </label>
               </div>
@@ -120,14 +126,20 @@ export default function Login() {
             </form>
 
             <div className="mt-4 text-center">
-              <Link to="/forgot-password" className="text-sm text-primary-600 hover:text-primary-500">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-primary-600 hover:text-primary-500"
+              >
                 ลืมรหัสผ่าน?
               </Link>
             </div>
 
             <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
               ยังไม่มีบัญชี?{' '}
-              <Link to="/register" className="text-primary-600 hover:text-primary-500 dark:text-primary-400 font-medium">
+              <Link
+                to="/register"
+                className="text-primary-600 hover:text-primary-500 dark:text-primary-400 font-medium"
+              >
                 สมัครสมาชิก
               </Link>
             </p>

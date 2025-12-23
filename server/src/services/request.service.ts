@@ -114,14 +114,16 @@ export async function createRequest(input: CreateRequestInput) {
   const location = request.location;
   const locationStr = `${location.building}${location.floor ? ` ชั้น ${location.floor}` : ''}${location.room ? ` ห้อง ${location.room}` : ''}`;
 
-  notifyDispatcher.notifyNewRequest({
-    requestNumber: request.requestNumber,
-    title: request.title,
-    category: request.category.nameTh,
-    location: locationStr,
-    priority: request.priority,
-    userName: request.user.name,
-  }).catch((err) => console.error('Failed to send notification:', err));
+  notifyDispatcher
+    .notifyNewRequest({
+      requestNumber: request.requestNumber,
+      title: request.title,
+      category: request.category.nameTh,
+      location: locationStr,
+      priority: request.priority,
+      userName: request.user.name,
+    })
+    .catch((err) => console.error('Failed to send notification:', err));
 
   return request;
 }
@@ -203,11 +205,7 @@ export async function getRequests(params: ListRequestsParams) {
   };
 }
 
-export async function getRequestById(
-  id: string,
-  userId: string,
-  userRole: string
-) {
+export async function getRequestById(id: string, userId: string, userRole: string) {
   const request = await prisma.request.findUnique({
     where: { id },
     include: {
@@ -389,17 +387,24 @@ export async function cancelRequest(id: string, userId: string, reason?: string)
   });
 
   // Send notifications (Discord + LINE Bot)
-  notifyDispatcher.notifyRequestCancelled({
-    requestNumber: updated.requestNumber,
-    title: updated.title,
-    userName: updated.user.name,
-    reason,
-  }).catch((err) => console.error('Failed to send notification:', err));
+  notifyDispatcher
+    .notifyRequestCancelled({
+      requestNumber: updated.requestNumber,
+      title: updated.title,
+      userName: updated.user.name,
+      reason,
+    })
+    .catch((err) => console.error('Failed to send notification:', err));
 
   return updated;
 }
 
-export async function assignRequest(id: string, technicianId: string, adminId: string, note?: string) {
+export async function assignRequest(
+  id: string,
+  technicianId: string,
+  adminId: string,
+  note?: string
+) {
   const request = await prisma.request.findUnique({ where: { id } });
 
   if (!request || request.deletedAt) {
@@ -461,11 +466,13 @@ export async function assignRequest(id: string, technicianId: string, adminId: s
   });
 
   // Send notifications (Discord + LINE Bot)
-  notifyDispatcher.notifyRequestAssigned({
-    requestNumber: request.requestNumber,
-    title: request.title,
-    technicianName: updated.technician?.user.name || 'ไม่ระบุ',
-  }).catch((err) => console.error('Failed to send notification:', err));
+  notifyDispatcher
+    .notifyRequestAssigned({
+      requestNumber: request.requestNumber,
+      title: request.title,
+      technicianName: updated.technician?.user.name || 'ไม่ระบุ',
+    })
+    .catch((err) => console.error('Failed to send notification:', err));
 
   return updated;
 }
@@ -536,11 +543,13 @@ export async function acceptRequest(id: string, technicianUserId: string) {
   });
 
   // Send notifications (Discord + LINE Bot)
-  notifyDispatcher.notifyRequestAccepted({
-    requestNumber: request.requestNumber,
-    title: request.title,
-    technicianName: request.technician?.user?.name || 'ไม่ระบุ',
-  }).catch((err) => console.error('Failed to send notification:', err));
+  notifyDispatcher
+    .notifyRequestAccepted({
+      requestNumber: request.requestNumber,
+      title: request.title,
+      technicianName: request.technician?.user?.name || 'ไม่ระบุ',
+    })
+    .catch((err) => console.error('Failed to send notification:', err));
 
   return updated;
 }
@@ -618,12 +627,14 @@ export async function rejectRequest(id: string, technicianUserId: string, reason
   });
 
   // Send notifications (Discord + LINE Bot)
-  notifyDispatcher.notifyRequestRejected({
-    requestNumber: request.requestNumber,
-    title: request.title,
-    technicianName,
-    reason,
-  }).catch((err) => console.error('Failed to send notification:', err));
+  notifyDispatcher
+    .notifyRequestRejected({
+      requestNumber: request.requestNumber,
+      title: request.title,
+      technicianName,
+      reason,
+    })
+    .catch((err) => console.error('Failed to send notification:', err));
 
   return updated;
 }
@@ -697,11 +708,13 @@ export async function startRequest(id: string, technicianUserId: string) {
   });
 
   // Send notifications (Discord + LINE Bot)
-  notifyDispatcher.notifyRequestStarted({
-    requestNumber: request.requestNumber,
-    title: request.title,
-    technicianName: request.technician?.user?.name || 'ไม่ระบุ',
-  }).catch((err) => console.error('Failed to send notification:', err));
+  notifyDispatcher
+    .notifyRequestStarted({
+      requestNumber: request.requestNumber,
+      title: request.title,
+      technicianName: request.technician?.user?.name || 'ไม่ระบุ',
+    })
+    .catch((err) => console.error('Failed to send notification:', err));
 
   return updated;
 }
@@ -778,12 +791,14 @@ export async function completeRequest(id: string, technicianUserId: string, note
   });
 
   // Send notifications (Discord + LINE Bot)
-  notifyDispatcher.notifyRequestCompleted({
-    requestNumber: request.requestNumber,
-    title: request.title,
-    technicianName: request.technician?.user?.name || 'ไม่ระบุ',
-    note,
-  }).catch((err) => console.error('Failed to send notification:', err));
+  notifyDispatcher
+    .notifyRequestCompleted({
+      requestNumber: request.requestNumber,
+      title: request.title,
+      technicianName: request.technician?.user?.name || 'ไม่ระบุ',
+      note,
+    })
+    .catch((err) => console.error('Failed to send notification:', err));
 
   return updated;
 }

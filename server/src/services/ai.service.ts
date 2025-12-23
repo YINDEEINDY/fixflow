@@ -144,7 +144,9 @@ export async function chatWithAI(
 /**
  * Get user's request history for context
  */
-export async function getUserRequestContext(userId: string): Promise<ChatContext['requestHistory']> {
+export async function getUserRequestContext(
+  userId: string
+): Promise<ChatContext['requestHistory']> {
   try {
     const requests = await prisma.request.findMany({
       where: { userId },
@@ -159,7 +161,7 @@ export async function getUserRequestContext(userId: string): Promise<ChatContext
       take: 10,
     });
 
-    return requests.map(r => ({
+    return requests.map((r) => ({
       id: r.id,
       title: r.title,
       status: r.status,

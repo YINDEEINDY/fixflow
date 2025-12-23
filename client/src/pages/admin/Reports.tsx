@@ -149,11 +149,7 @@ export default function Reports() {
           <p className="text-gray-600">สรุปข้อมูลคำร้องซ่อมในระบบ</p>
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => handleExport('excel')}
-            disabled={isExporting}
-          >
+          <Button variant="outline" onClick={() => handleExport('excel')} disabled={isExporting}>
             {isExporting ? (
               <Loader2 className="w-4 h-4 animate-spin mr-2" />
             ) : (
@@ -161,11 +157,7 @@ export default function Reports() {
             )}
             Excel
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => handleExport('pdf')}
-            disabled={isExporting}
-          >
+          <Button variant="outline" onClick={() => handleExport('pdf')} disabled={isExporting}>
             {isExporting ? (
               <Loader2 className="w-4 h-4 animate-spin mr-2" />
             ) : (
@@ -278,9 +270,10 @@ export default function Reports() {
             {stats?.byStatus && stats.byStatus.length > 0 ? (
               <div className="space-y-3">
                 {stats.byStatus.map((item) => {
-                  const percentage = stats.totalRequests > 0
-                    ? Math.round((item.count / stats.totalRequests) * 100)
-                    : 0;
+                  const percentage =
+                    stats.totalRequests > 0
+                      ? Math.round((item.count / stats.totalRequests) * 100)
+                      : 0;
                   return (
                     <div key={item.status}>
                       <div className="flex items-center justify-between mb-1">
@@ -319,9 +312,10 @@ export default function Reports() {
             {stats?.byPriority && stats.byPriority.length > 0 ? (
               <div className="space-y-3">
                 {stats.byPriority.map((item) => {
-                  const percentage = stats.totalRequests > 0
-                    ? Math.round((item.count / stats.totalRequests) * 100)
-                    : 0;
+                  const percentage =
+                    stats.totalRequests > 0
+                      ? Math.round((item.count / stats.totalRequests) * 100)
+                      : 0;
                   return (
                     <div key={item.priority}>
                       <div className="flex items-center justify-between mb-1">
@@ -361,9 +355,10 @@ export default function Reports() {
               <div className="space-y-3">
                 {stats.byCategory.map((item, index) => {
                   const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
-                  const percentage = stats.totalRequests > 0
-                    ? Math.round((item.count / stats.totalRequests) * 100)
-                    : 0;
+                  const percentage =
+                    stats.totalRequests > 0
+                      ? Math.round((item.count / stats.totalRequests) * 100)
+                      : 0;
                   return (
                     <div key={item.categoryId}>
                       <div className="flex items-center justify-between mb-1">
@@ -409,19 +404,17 @@ export default function Reports() {
                         index === 0
                           ? 'bg-yellow-500'
                           : index === 1
-                          ? 'bg-gray-400'
-                          : index === 2
-                          ? 'bg-amber-600'
-                          : 'bg-gray-300'
+                            ? 'bg-gray-400'
+                            : index === 2
+                              ? 'bg-amber-600'
+                              : 'bg-gray-300'
                       }`}
                     >
                       {index + 1}
                     </div>
                     <div className="flex-1">
                       <p className="font-medium">{tech.name}</p>
-                      <p className="text-sm text-gray-500">
-                        {tech.completedJobs} งานที่เสร็จสิ้น
-                      </p>
+                      <p className="text-sm text-gray-500">{tech.completedJobs} งานที่เสร็จสิ้น</p>
                     </div>
                   </div>
                 ))}

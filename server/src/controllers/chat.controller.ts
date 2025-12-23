@@ -59,11 +59,21 @@ export async function chat(req: AuthRequest, res: Response): Promise<void> {
 
     if (error instanceof Error) {
       if (error.message === 'AI_NOT_CONFIGURED') {
-        sendError(res, 'AI_NOT_CONFIGURED', 'AI service is not configured. Please contact administrator.', 503);
+        sendError(
+          res,
+          'AI_NOT_CONFIGURED',
+          'AI service is not configured. Please contact administrator.',
+          503
+        );
         return;
       }
       if (error.message === 'AI_SERVICE_ERROR') {
-        sendError(res, 'AI_SERVICE_ERROR', 'AI service encountered an error. Please try again later.', 500);
+        sendError(
+          res,
+          'AI_SERVICE_ERROR',
+          'AI service encountered an error. Please try again later.',
+          500
+        );
         return;
       }
     }
@@ -85,7 +95,7 @@ export async function getChatHistory(req: AuthRequest, res: Response): Promise<v
     const messages = await aiService.getChatHistory(req.user.userId);
 
     sendSuccess(res, {
-      messages: messages.map(m => ({
+      messages: messages.map((m) => ({
         id: m.id,
         content: m.content,
         role: m.role,

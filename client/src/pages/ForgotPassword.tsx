@@ -66,12 +66,10 @@ export default function ForgotPassword() {
             {isSuccess ? (
               <div className="text-center py-4">
                 <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  ส่งอีเมลเรียบร้อยแล้ว
-                </h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">ส่งอีเมลเรียบร้อยแล้ว</h3>
                 <p className="text-gray-600 mb-6">
-                  กรุณาตรวจสอบอีเมลของคุณเพื่อรีเซ็ตรหัสผ่าน
-                  หากไม่พบอีเมล กรุณาตรวจสอบในโฟลเดอร์สแปม
+                  กรุณาตรวจสอบอีเมลของคุณเพื่อรีเซ็ตรหัสผ่าน หากไม่พบอีเมล
+                  กรุณาตรวจสอบในโฟลเดอร์สแปม
                 </p>
                 <Link to="/login">
                   <Button variant="outline" className="w-full">
@@ -112,7 +110,10 @@ export default function ForgotPassword() {
                 </form>
 
                 <div className="mt-6 text-center">
-                  <Link to="/login" className="text-sm text-primary-600 hover:text-primary-500 inline-flex items-center">
+                  <Link
+                    to="/login"
+                    className="text-sm text-primary-600 hover:text-primary-500 inline-flex items-center"
+                  >
                     <ArrowLeft className="w-4 h-4 mr-1" />
                     กลับไปหน้าเข้าสู่ระบบ
                   </Link>

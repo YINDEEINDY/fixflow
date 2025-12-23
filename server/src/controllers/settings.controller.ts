@@ -151,11 +151,17 @@ export async function testLineBot(_req: AuthRequest, res: Response) {
     if (!success) {
       return res.status(400).json({
         success: false,
-        error: { code: 'LINE_BOT_ERROR', message: 'Failed to send LINE Bot notification. Check Channel Access Token and Group ID.' },
+        error: {
+          code: 'LINE_BOT_ERROR',
+          message: 'Failed to send LINE Bot notification. Check Channel Access Token and Group ID.',
+        },
       });
     }
 
-    return res.json({ success: true, data: { message: 'LINE Bot test notification sent successfully' } });
+    return res.json({
+      success: true,
+      data: { message: 'LINE Bot test notification sent successfully' },
+    });
   } catch (err) {
     console.error('Test LINE Bot error:', err);
     return res.status(500).json({

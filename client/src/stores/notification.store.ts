@@ -47,9 +47,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
       if (response.success) {
         const { notifications } = get();
         set({
-          notifications: notifications.map((n) =>
-            n.id === id ? { ...n, isRead: true } : n
-          ),
+          notifications: notifications.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
           unreadCount: Math.max(0, get().unreadCount - 1),
         });
       }

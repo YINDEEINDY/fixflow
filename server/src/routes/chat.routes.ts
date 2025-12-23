@@ -13,8 +13,8 @@ const chatLimiter = rateLimit({
     success: false,
     error: {
       code: 'RATE_LIMIT_EXCEEDED',
-      message: 'Too many chat requests, please try again later'
-    }
+      message: 'Too many chat requests, please try again later',
+    },
   },
   standardHeaders: true,
   legacyHeaders: false,

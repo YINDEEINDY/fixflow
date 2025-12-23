@@ -72,9 +72,7 @@ export function ImageUpload({
 
   return (
     <div className={cn('w-full', className)}>
-      {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-      )}
+      {label && <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>}
       <div
         className={cn(
           'relative border-2 border-dashed rounded-lg overflow-hidden transition-colors',

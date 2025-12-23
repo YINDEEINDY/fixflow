@@ -28,10 +28,7 @@ export async function getTemplates(userId?: string) {
   const templates = await prisma.requestTemplate.findMany({
     where: {
       isActive: true,
-      OR: [
-        { isPublic: true },
-        { createdBy: userId },
-      ],
+      OR: [{ isPublic: true }, { createdBy: userId }],
     },
     include: {
       category: {
@@ -50,10 +47,7 @@ export async function getTemplates(userId?: string) {
         },
       },
     },
-    orderBy: [
-      { usageCount: 'desc' },
-      { name: 'asc' },
-    ],
+    orderBy: [{ usageCount: 'desc' }, { name: 'asc' }],
   });
 
   return templates;
@@ -134,7 +128,12 @@ export async function createTemplate(input: CreateTemplateInput) {
 }
 
 // Update template
-export async function updateTemplate(id: string, userId: string, userRole: string, input: UpdateTemplateInput) {
+export async function updateTemplate(
+  id: string,
+  userId: string,
+  userRole: string,
+  input: UpdateTemplateInput
+) {
   const template = await prisma.requestTemplate.findUnique({ where: { id } });
 
   if (!template) {

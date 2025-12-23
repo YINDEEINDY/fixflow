@@ -1,6 +1,18 @@
 import { create } from 'zustand';
-import type { Request, Category, Location, Technician, Priority, RequestStatus } from '../types/index';
-import { requestsApi, type CreateRequestInput, type UpdateRequestInput, type ListRequestsParams } from '../api/requests';
+import type {
+  Request,
+  Category,
+  Location,
+  Technician,
+  Priority,
+  RequestStatus,
+} from '../types/index';
+import {
+  requestsApi,
+  type CreateRequestInput,
+  type UpdateRequestInput,
+  type ListRequestsParams,
+} from '../api/requests';
 
 interface RequestState {
   // Data

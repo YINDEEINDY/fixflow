@@ -8,8 +8,14 @@ export const Header: React.FC = () => {
       {/* Animated Background Orbs */}
       <div className="absolute inset-0">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary-400/30 rounded-full mix-blend-multiply filter blur-3xl animate-float"></div>
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-secondary-400/30 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute -bottom-32 left-1/3 w-96 h-96 bg-accent-400/20 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+        <div
+          className="absolute top-0 right-1/4 w-96 h-96 bg-secondary-400/30 rounded-full mix-blend-multiply filter blur-3xl animate-float"
+          style={{ animationDelay: '1s' }}
+        ></div>
+        <div
+          className="absolute -bottom-32 left-1/3 w-96 h-96 bg-accent-400/20 rounded-full mix-blend-multiply filter blur-3xl animate-float"
+          style={{ animationDelay: '2s' }}
+        ></div>
       </div>
 
       {/* Mesh Pattern */}
@@ -58,10 +64,7 @@ export const Header: React.FC = () => {
       {/* Bottom Decoration Wave */}
       <div className="absolute bottom-0 left-0 right-0">
         <svg className="w-full h-12" viewBox="0 0 1200 120" preserveAspectRatio="none">
-          <path
-            d="M0,0 Q300,80 600,40 T1200,0 L1200,120 L0,120 Z"
-            fill="rgb(249, 250, 251)"
-          />
+          <path d="M0,0 Q300,80 600,40 T1200,0 L1200,120 L0,120 Z" fill="rgb(249, 250, 251)" />
         </svg>
       </div>
     </header>

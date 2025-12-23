@@ -238,7 +238,10 @@ export async function createCategory(input: CategoryInput) {
   return prisma.category.create({ data: input });
 }
 
-export async function updateCategory(id: string, input: Partial<CategoryInput> & { isActive?: boolean }) {
+export async function updateCategory(
+  id: string,
+  input: Partial<CategoryInput> & { isActive?: boolean }
+) {
   const category = await prisma.category.findUnique({ where: { id } });
   if (!category) throw new Error('CATEGORY_NOT_FOUND');
 
@@ -280,7 +283,10 @@ export async function createLocation(input: LocationInput) {
   return prisma.location.create({ data: input });
 }
 
-export async function updateLocation(id: string, input: Partial<LocationInput> & { isActive?: boolean }) {
+export async function updateLocation(
+  id: string,
+  input: Partial<LocationInput> & { isActive?: boolean }
+) {
   const location = await prisma.location.findUnique({ where: { id } });
   if (!location) throw new Error('LOCATION_NOT_FOUND');
 
@@ -307,17 +313,14 @@ export async function deleteLocation(id: string) {
 // ============ REPORTS ============
 
 export async function getReportStats(startDate?: Date, endDate?: Date) {
-  const dateFilter = startDate && endDate ? {
-    createdAt: { gte: startDate, lte: endDate },
-  } : {};
+  const dateFilter =
+    startDate && endDate
+      ? {
+          createdAt: { gte: startDate, lte: endDate },
+        }
+      : {};
 
-  const [
-    totalRequests,
-    byStatus,
-    byCategory,
-    byPriority,
-    topTechnicians,
-  ] = await Promise.all([
+  const [totalRequests, byStatus, byCategory, byPriority, topTechnicians] = await Promise.all([
     // Total requests
     prisma.request.count({ where: { ...dateFilter, deletedAt: null } }),
 
@@ -359,26 +362,26 @@ export async function getReportStats(startDate?: Date, endDate?: Date) {
 
   // Get category names
   const categories = await prisma.category.findMany();
-  const categoryMap = new Map(categories.map(c => [c.id, c.nameTh]));
+  const categoryMap = new Map(categories.map((c) => [c.id, c.nameTh]));
 
   // Get technician names
-  const technicianIds = topTechnicians.map(t => t.technicianId).filter(Boolean) as string[];
+  const technicianIds = topTechnicians.map((t) => t.technicianId).filter(Boolean) as string[];
   const technicians = await prisma.technician.findMany({
     where: { id: { in: technicianIds } },
     include: { user: { select: { name: true } } },
   });
-  const technicianMap = new Map(technicians.map(t => [t.id, t.user.name]));
+  const technicianMap = new Map(technicians.map((t) => [t.id, t.user.name]));
 
   return {
     totalRequests,
-    byStatus: byStatus.map(s => ({ status: s.status, count: s._count })),
-    byCategory: byCategory.map(c => ({
+    byStatus: byStatus.map((s) => ({ status: s.status, count: s._count })),
+    byCategory: byCategory.map((c) => ({
       categoryId: c.categoryId,
       category: categoryMap.get(c.categoryId) || 'Unknown',
       count: c._count,
     })),
-    byPriority: byPriority.map(p => ({ priority: p.priority, count: p._count })),
-    topTechnicians: topTechnicians.map(t => ({
+    byPriority: byPriority.map((p) => ({ priority: p.priority, count: p._count })),
+    topTechnicians: topTechnicians.map((t) => ({
       technicianId: t.technicianId,
       name: technicianMap.get(t.technicianId!) || 'Unknown',
       completedJobs: t._count,

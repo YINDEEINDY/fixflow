@@ -13,7 +13,13 @@ import {
 import { Button } from '../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { useAuthStore } from '../stores/auth.store';
-import { dashboardApi, type UserStats, type TechnicianStats, type AdminStats, type RecentRequest } from '../api/dashboard';
+import {
+  dashboardApi,
+  type UserStats,
+  type TechnicianStats,
+  type AdminStats,
+  type RecentRequest,
+} from '../api/dashboard';
 
 const statusColors: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-800',
@@ -105,15 +111,13 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            สวัสดี, {user?.name}
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">สวัสดี, {user?.name}</h1>
           <p className="text-gray-600 dark:text-gray-400">
             {user?.role === 'admin'
               ? 'ภาพรวมระบบแจ้งซ่อม'
               : user?.role === 'technician'
-              ? 'งานของคุณวันนี้'
-              : 'จัดการคำร้องแจ้งซ่อมของคุณ'}
+                ? 'งานของคุณวันนี้'
+                : 'จัดการคำร้องแจ้งซ่อมของคุณ'}
           </p>
         </div>
         {user?.role === 'user' && (
@@ -280,10 +284,7 @@ export default function Dashboard() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>รายการล่าสุด</CardTitle>
-          <Link
-            to="/requests"
-            className="text-sm text-primary-600 hover:text-primary-500"
-          >
+          <Link to="/requests" className="text-sm text-primary-600 hover:text-primary-500">
             ดูทั้งหมด
           </Link>
         </CardHeader>
@@ -320,9 +321,7 @@ export default function Dashboard() {
                       {request.category} • {formatTime(request.createdAt)}
                     </p>
                   </div>
-                  <AlertTriangle
-                    className={`w-5 h-5 ${priorityColors[request.priority]}`}
-                  />
+                  <AlertTriangle className={`w-5 h-5 ${priorityColors[request.priority]}`} />
                 </Link>
               ))}
             </div>

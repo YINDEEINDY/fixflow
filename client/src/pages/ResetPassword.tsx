@@ -9,13 +9,15 @@ import { Input } from '../components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { api } from '../api/client';
 
-const resetPasswordSchema = z.object({
-  password: z.string().min(8, 'รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร'),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'รหัสผ่านไม่ตรงกัน',
-  path: ['confirmPassword'],
-});
+const resetPasswordSchema = z
+  .object({
+    password: z.string().min(8, 'รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร'),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'รหัสผ่านไม่ตรงกัน',
+    path: ['confirmPassword'],
+  });
 
 type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
 
@@ -111,24 +113,16 @@ export default function ResetPassword() {
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
                   ลิงก์ไม่ถูกต้องหรือหมดอายุ
                 </h3>
-                <p className="text-gray-600 mb-6">
-                  กรุณาขอลิงก์รีเซ็ตรหัสผ่านใหม่อีกครั้ง
-                </p>
+                <p className="text-gray-600 mb-6">กรุณาขอลิงก์รีเซ็ตรหัสผ่านใหม่อีกครั้ง</p>
                 <Link to="/forgot-password">
-                  <Button className="w-full">
-                    ขอลิงก์ใหม่
-                  </Button>
+                  <Button className="w-full">ขอลิงก์ใหม่</Button>
                 </Link>
               </div>
             ) : isSuccess ? (
               <div className="text-center py-4">
                 <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  เปลี่ยนรหัสผ่านสำเร็จ
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  กำลังนำคุณไปหน้าเข้าสู่ระบบ...
-                </p>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">เปลี่ยนรหัสผ่านสำเร็จ</h3>
+                <p className="text-gray-600 mb-6">กำลังนำคุณไปหน้าเข้าสู่ระบบ...</p>
                 <Link to="/login">
                   <Button variant="outline" className="w-full">
                     <ArrowLeft className="w-4 h-4 mr-2" />
@@ -181,7 +175,10 @@ export default function ResetPassword() {
                 </form>
 
                 <div className="mt-6 text-center">
-                  <Link to="/login" className="text-sm text-primary-600 hover:text-primary-500 inline-flex items-center">
+                  <Link
+                    to="/login"
+                    className="text-sm text-primary-600 hover:text-primary-500 inline-flex items-center"
+                  >
                     <ArrowLeft className="w-4 h-4 mr-1" />
                     กลับไปหน้าเข้าสู่ระบบ
                   </Link>

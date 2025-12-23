@@ -22,11 +22,7 @@ export function ThemeToggle({ className = '' }: ThemeToggleProps) {
       aria-label={theme === 'light' ? 'เปลี่ยนเป็น Dark Mode' : 'เปลี่ยนเป็น Light Mode'}
       title={theme === 'light' ? 'Dark Mode' : 'Light Mode'}
     >
-      {theme === 'light' ? (
-        <Moon className="w-5 h-5" />
-      ) : (
-        <Sun className="w-5 h-5" />
-      )}
+      {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
     </button>
   );
 }

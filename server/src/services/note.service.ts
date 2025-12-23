@@ -33,7 +33,7 @@ export async function createNote(input: CreateNoteInput) {
       technicianId: input.technicianId,
       note: input.note,
       photos: input.photos || [],
-      materials: input.materials as object || {},
+      materials: (input.materials as object) || {},
       timeSpentMinutes: input.timeSpentMinutes,
     },
     include: {

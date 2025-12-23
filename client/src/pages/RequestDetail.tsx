@@ -253,15 +253,11 @@ export default function RequestDetail() {
               <CardTitle>รายละเอียด</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {request.description && (
-                <p className="text-gray-700">{request.description}</p>
-              )}
+              {request.description && <p className="text-gray-700">{request.description}</p>}
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="p-1 bg-gray-100 rounded">
-                    {request.category.nameTh}
-                  </span>
+                  <span className="p-1 bg-gray-100 rounded">{request.category.nameTh}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <AlertTriangle className={`w-4 h-4 ${priorityColors[request.priority]}`} />
@@ -338,17 +334,13 @@ export default function RequestDetail() {
                     <Star
                       key={star}
                       className={`w-6 h-6 ${
-                        star <= rating.score
-                          ? 'text-yellow-400 fill-yellow-400'
-                          : 'text-gray-300'
+                        star <= rating.score ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
                       }`}
                     />
                   ))}
                   <span className="ml-2 text-lg font-medium">{rating.score}/5</span>
                 </div>
-                {rating.comment && (
-                  <p className="text-gray-600 mt-2">{rating.comment}</p>
-                )}
+                {rating.comment && <p className="text-gray-600 mt-2">{rating.comment}</p>}
                 <p className="text-xs text-gray-400 mt-2">
                   ให้คะแนนโดย {rating.user.name} เมื่อ {formatDate(rating.createdAt)}
                 </p>
@@ -484,10 +476,7 @@ export default function RequestDetail() {
 
               {/* Admin actions */}
               {isAdmin && ['pending', 'rejected'].includes(request.status) && (
-                <Button
-                  className="w-full"
-                  onClick={() => setShowAssignModal(true)}
-                >
+                <Button className="w-full" onClick={() => setShowAssignModal(true)}>
                   <User className="w-4 h-4 mr-2" />
                   มอบหมายช่าง
                 </Button>
@@ -498,11 +487,7 @@ export default function RequestDetail() {
                 <>
                   {request.status === 'assigned' && (
                     <>
-                      <Button
-                        className="w-full"
-                        onClick={handleAccept}
-                        disabled={isSubmitting}
-                      >
+                      <Button className="w-full" onClick={handleAccept} disabled={isSubmitting}>
                         <Check className="w-4 h-4 mr-2" />
                         รับงาน
                       </Button>
@@ -517,11 +502,7 @@ export default function RequestDetail() {
                     </>
                   )}
                   {request.status === 'accepted' && (
-                    <Button
-                      className="w-full"
-                      onClick={handleStart}
-                      disabled={isSubmitting}
-                    >
+                    <Button className="w-full" onClick={handleStart} disabled={isSubmitting}>
                       <Play className="w-4 h-4 mr-2" />
                       เริ่มดำเนินการ
                     </Button>
@@ -551,19 +532,13 @@ export default function RequestDetail() {
               )}
 
               {request.status === 'completed' && !canRate && !rating && (
-                <p className="text-center text-green-600 font-medium">
-                  งานเสร็จสิ้นแล้ว
-                </p>
+                <p className="text-center text-green-600 font-medium">งานเสร็จสิ้นแล้ว</p>
               )}
               {request.status === 'completed' && rating && (
-                <p className="text-center text-green-600 font-medium">
-                  ให้คะแนนแล้ว
-                </p>
+                <p className="text-center text-green-600 font-medium">ให้คะแนนแล้ว</p>
               )}
               {request.status === 'cancelled' && (
-                <p className="text-center text-gray-500">
-                  คำร้องถูกยกเลิก
-                </p>
+                <p className="text-center text-gray-500">คำร้องถูกยกเลิก</p>
               )}
             </CardContent>
           </Card>
@@ -651,9 +626,7 @@ export default function RequestDetail() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  เลือกช่าง
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">เลือกช่าง</label>
                 <select
                   className="w-full border rounded-lg p-2"
                   value={selectedTechnicianId}
@@ -668,9 +641,7 @@ export default function RequestDetail() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  หมายเหตุ
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">หมายเหตุ</label>
                 <textarea
                   className="w-full border rounded-lg p-2"
                   rows={2}
@@ -753,9 +724,7 @@ export default function RequestDetail() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  คะแนน
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">คะแนน</label>
                 <div className="flex items-center justify-center gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
@@ -807,11 +776,7 @@ export default function RequestDetail() {
                   onClick={handleSubmitRating}
                   disabled={isSubmittingRating}
                 >
-                  {isSubmittingRating ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    'ส่งคะแนน'
-                  )}
+                  {isSubmittingRating ? <Loader2 className="w-4 h-4 animate-spin" /> : 'ส่งคะแนน'}
                 </Button>
               </div>
             </CardContent>

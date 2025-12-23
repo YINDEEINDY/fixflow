@@ -9,7 +9,11 @@ const router = Router();
 const storage = multer.memoryStorage();
 
 // File filter for images
-const imageFilter = (_req: Express.Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const imageFilter = (
+  _req: Express.Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback
+) => {
   const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
@@ -76,20 +80,28 @@ const handleMulterError = (err: Error, _req: Request, res: Response, next: NextF
 router.use(authenticate);
 
 // Single image upload with error handling
-router.post('/image', (req, res, next) => {
-  upload.single('image')(req, res, (err) => {
-    if (err) return handleMulterError(err, req, res, next);
-    next();
-  });
-}, uploadController.uploadImage);
+router.post(
+  '/image',
+  (req, res, next) => {
+    upload.single('image')(req, res, (err) => {
+      if (err) return handleMulterError(err, req, res, next);
+      next();
+    });
+  },
+  uploadController.uploadImage
+);
 
 // Multiple images upload with error handling
-router.post('/images', (req, res, next) => {
-  upload.array('images', 10)(req, res, (err) => {
-    if (err) return handleMulterError(err, req, res, next);
-    next();
-  });
-}, uploadController.uploadMultipleImages);
+router.post(
+  '/images',
+  (req, res, next) => {
+    upload.array('images', 10)(req, res, (err) => {
+      if (err) return handleMulterError(err, req, res, next);
+      next();
+    });
+  },
+  uploadController.uploadMultipleImages
+);
 
 // Delete file
 router.delete('/:filename', uploadController.deleteFile);

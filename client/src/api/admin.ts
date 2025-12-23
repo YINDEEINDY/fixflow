@@ -65,13 +65,15 @@ export interface MonthlyTrend {
 export const adminApi = {
   // User Management
   users: {
-    getAll: (params: {
-      page?: number;
-      limit?: number;
-      role?: Role;
-      search?: string;
-      isActive?: boolean;
-    } = {}) => {
+    getAll: (
+      params: {
+        page?: number;
+        limit?: number;
+        role?: Role;
+        search?: string;
+        isActive?: boolean;
+      } = {}
+    ) => {
       const query = new URLSearchParams();
       if (params.page) query.set('page', String(params.page));
       if (params.limit) query.set('limit', String(params.limit));
@@ -85,8 +87,7 @@ export const adminApi = {
 
     create: (input: CreateUserInput) => api.post<AdminUser>('/admin/users', input),
 
-    update: (id: string, input: UpdateUserInput) =>
-      api.put<AdminUser>(`/admin/users/${id}`, input),
+    update: (id: string, input: UpdateUserInput) => api.put<AdminUser>(`/admin/users/${id}`, input),
 
     delete: (id: string) => api.delete<{ message: string }>(`/admin/users/${id}`),
   },
@@ -124,7 +125,6 @@ export const adminApi = {
       return api.get<ReportStats>(`/admin/reports/stats?${query}`);
     },
 
-    getTrend: (months = 6) =>
-      api.get<MonthlyTrend[]>(`/admin/reports/trend?months=${months}`),
+    getTrend: (months = 6) => api.get<MonthlyTrend[]>(`/admin/reports/trend?months=${months}`),
   },
 };

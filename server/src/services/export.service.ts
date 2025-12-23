@@ -5,7 +5,6 @@ import fs from 'fs';
 import { prisma } from '../config/db.js';
 import { RequestStatus, Priority } from '@prisma/client';
 
-
 // Font paths - using IBM Plex Sans Thai (has both Thai AND Latin/numbers in one font)
 const FONT_PATH = path.join(process.cwd(), 'assets/fonts');
 const THAI_FONT_REGULAR = path.join(FONT_PATH, 'IBMPlexSansThai-Regular.ttf');
@@ -129,9 +128,7 @@ export async function exportToExcel(filters: ExportFilters): Promise<Buffer> {
       priority: priorityLabels[request.priority] || request.priority,
       status: statusLabels[request.status] || request.status,
       technician: request.technician?.user.name || '-',
-      completedAt: request.completedAt
-        ? request.completedAt.toLocaleDateString('th-TH')
-        : '-',
+      completedAt: request.completedAt ? request.completedAt.toLocaleDateString('th-TH') : '-',
     });
   });
 
@@ -181,70 +178,76 @@ export async function exportToPdf(filters: ExportFilters): Promise<Buffer> {
       const fontBold = hasThaiFonts ? 'Thai-Bold' : 'Helvetica-Bold';
       console.log('[Export PDF] Using fonts:', { fontRegular, fontBold, hasThaiFonts });
 
-    // Title
-    doc.font(fontBold).fontSize(18).text('รายงานการแจ้งซ่อม FixFlow', { align: 'center' });
-    doc.moveDown();
-    doc.font(fontRegular).fontSize(10).text(`สร้างเมื่อ: ${new Date().toLocaleDateString('th-TH')}`, { align: 'right' });
-    doc.moveDown();
+      // Title
+      doc.font(fontBold).fontSize(18).text('รายงานการแจ้งซ่อม FixFlow', { align: 'center' });
+      doc.moveDown();
+      doc
+        .font(fontRegular)
+        .fontSize(10)
+        .text(`สร้างเมื่อ: ${new Date().toLocaleDateString('th-TH')}`, { align: 'right' });
+      doc.moveDown();
 
-    // Summary
-    const statusCounts = requests.reduce((acc, r) => {
-      acc[r.status] = (acc[r.status] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+      // Summary
+      const statusCounts = requests.reduce(
+        (acc, r) => {
+          acc[r.status] = (acc[r.status] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      );
 
-    doc.font(fontBold).fontSize(12).text('สรุป:');
-    doc.font(fontRegular).fontSize(10);
-    doc.text(`- รายการทั้งหมด: ${requests.length}`);
-    Object.entries(statusCounts).forEach(([status, count]) => {
-      doc.text(`- ${statusLabels[status] || status}: ${count}`);
-    });
-    doc.moveDown();
+      doc.font(fontBold).fontSize(12).text('สรุป:');
+      doc.font(fontRegular).fontSize(10);
+      doc.text(`- รายการทั้งหมด: ${requests.length}`);
+      Object.entries(statusCounts).forEach(([status, count]) => {
+        doc.text(`- ${statusLabels[status] || status}: ${count}`);
+      });
+      doc.moveDown();
 
-    // Table header
-    const tableTop = doc.y;
-    const colWidths = [80, 60, 150, 80, 100, 80, 80, 60];
-    const headers = ['เลขที่', 'วันที่', 'หัวข้อ', 'หมวด', 'สถานที่', 'ผู้แจ้ง', 'ช่าง', 'สถานะ'];
+      // Table header
+      const tableTop = doc.y;
+      const colWidths = [80, 60, 150, 80, 100, 80, 80, 60];
+      const headers = ['เลขที่', 'วันที่', 'หัวข้อ', 'หมวด', 'สถานที่', 'ผู้แจ้ง', 'ช่าง', 'สถานะ'];
 
-    let x = 30;
-    doc.font(fontBold).fontSize(9);
-    headers.forEach((header, i) => {
-      doc.text(header, x, tableTop, { width: colWidths[i], align: 'left' });
-      x += colWidths[i];
-    });
-
-    // Table rows
-    doc.font(fontRegular).fontSize(8);
-    let y = tableTop + 20;
-
-    requests.forEach((request) => {
-      if (y > 550) {
-        doc.addPage();
-        y = 30;
-      }
-
-      const location = request.location;
-      const locationStr = `${location.building}${location.floor ? ` ${location.floor}` : ''}`;
-
-      x = 30;
-      const rowData = [
-        request.requestNumber,
-        request.createdAt.toLocaleDateString('th-TH'),
-        request.title.substring(0, 30) + (request.title.length > 30 ? '...' : ''),
-        request.category.nameTh,
-        locationStr,
-        request.user.name,
-        request.technician?.user.name || '-',
-        statusLabels[request.status] || request.status,
-      ];
-
-      rowData.forEach((text, i) => {
-        doc.text(text, x, y, { width: colWidths[i], align: 'left' });
+      let x = 30;
+      doc.font(fontBold).fontSize(9);
+      headers.forEach((header, i) => {
+        doc.text(header, x, tableTop, { width: colWidths[i], align: 'left' });
         x += colWidths[i];
       });
 
-      y += 15;
-    });
+      // Table rows
+      doc.font(fontRegular).fontSize(8);
+      let y = tableTop + 20;
+
+      requests.forEach((request) => {
+        if (y > 550) {
+          doc.addPage();
+          y = 30;
+        }
+
+        const location = request.location;
+        const locationStr = `${location.building}${location.floor ? ` ${location.floor}` : ''}`;
+
+        x = 30;
+        const rowData = [
+          request.requestNumber,
+          request.createdAt.toLocaleDateString('th-TH'),
+          request.title.substring(0, 30) + (request.title.length > 30 ? '...' : ''),
+          request.category.nameTh,
+          locationStr,
+          request.user.name,
+          request.technician?.user.name || '-',
+          statusLabels[request.status] || request.status,
+        ];
+
+        rowData.forEach((text, i) => {
+          doc.text(text, x, y, { width: colWidths[i], align: 'left' });
+          x += colWidths[i];
+        });
+
+        y += 15;
+      });
 
       doc.end();
     } catch (err) {
@@ -257,20 +260,29 @@ export async function exportToPdf(filters: ExportFilters): Promise<Buffer> {
 export async function getExportStats(filters: ExportFilters) {
   const requests = await getRequestsForExport(filters);
 
-  const statusCounts = requests.reduce((acc, r) => {
-    acc[r.status] = (acc[r.status] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const statusCounts = requests.reduce(
+    (acc, r) => {
+      acc[r.status] = (acc[r.status] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
-  const priorityCounts = requests.reduce((acc, r) => {
-    acc[r.priority] = (acc[r.priority] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const priorityCounts = requests.reduce(
+    (acc, r) => {
+      acc[r.priority] = (acc[r.priority] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
-  const categoryCounts = requests.reduce((acc, r) => {
-    acc[r.category.nameTh] = (acc[r.category.nameTh] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const categoryCounts = requests.reduce(
+    (acc, r) => {
+      acc[r.category.nameTh] = (acc[r.category.nameTh] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
   return {
     total: requests.length,

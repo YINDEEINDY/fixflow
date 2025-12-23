@@ -1,14 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  FolderOpen,
-  Plus,
-  Edit,
-  Trash2,
-  Loader2,
-  X,
-  Check,
-  XCircle,
-} from 'lucide-react';
+import { FolderOpen, Plus, Edit, Trash2, Loader2, X, Check, XCircle } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
@@ -170,9 +161,7 @@ export default function CategoriesManagement() {
         </div>
       ) : categories.length === 0 ? (
         <Card>
-          <CardContent className="py-12 text-center text-gray-500">
-            ยังไม่มีหมวดหมู่
-          </CardContent>
+          <CardContent className="py-12 text-center text-gray-500">ยังไม่มีหมวดหมู่</CardContent>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -207,18 +196,12 @@ export default function CategoriesManagement() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">
-                    ลำดับ: {category.sortOrder}
-                  </span>
+                  <span className="text-sm text-gray-500">ลำดับ: {category.sortOrder}</span>
                   <div className="flex items-center gap-2">
                     <Button variant="ghost" size="sm" onClick={() => openEditModal(category)}>
                       <Edit className="w-4 h-4" />
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleToggleActive(category)}
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => handleToggleActive(category)}>
                       {category.isActive ? (
                         <XCircle className="w-4 h-4" />
                       ) : (
@@ -253,9 +236,7 @@ export default function CategoriesManagement() {
             </CardHeader>
             <CardContent className="space-y-4">
               {error && (
-                <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm">
-                  {error}
-                </div>
+                <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm">{error}</div>
               )}
 
               <Input
@@ -309,7 +290,9 @@ export default function CategoriesManagement() {
                 label="ลำดับการแสดง"
                 type="number"
                 value={formData.sortOrder?.toString() || '0'}
-                onChange={(e) => setFormData({ ...formData, sortOrder: parseInt(e.target.value, 10) || 0 })}
+                onChange={(e) =>
+                  setFormData({ ...formData, sortOrder: parseInt(e.target.value, 10) || 0 })
+                }
               />
 
               <div className="flex items-center gap-2">

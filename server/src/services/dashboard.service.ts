@@ -129,9 +129,8 @@ export async function getRecentRequests(userId: string, role: Role, limit = 5) {
     where.userId = userId;
   }
 
-  const technician = role === 'technician'
-    ? await prisma.technician.findUnique({ where: { userId } })
-    : null;
+  const technician =
+    role === 'technician' ? await prisma.technician.findUnique({ where: { userId } }) : null;
 
   if (role === 'technician' && technician) {
     where.technicianId = technician.id;

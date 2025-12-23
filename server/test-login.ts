@@ -6,7 +6,7 @@ async function main() {
   try {
     const result = await authService.login({
       email: 'admin@fixflow.com',
-      password: 'admin123'
+      password: 'admin123',
     });
     console.log('Login success:', result.user.email);
   } catch (e: any) {

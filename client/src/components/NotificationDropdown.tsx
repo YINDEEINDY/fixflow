@@ -89,9 +89,7 @@ export default function NotificationDropdown() {
 
           <div className="max-h-96 overflow-y-auto">
             {notifications.length === 0 ? (
-              <div className="p-4 text-center text-gray-500">
-                ไม่มีการแจ้งเตือน
-              </div>
+              <div className="p-4 text-center text-gray-500">ไม่มีการแจ้งเตือน</div>
             ) : (
               notifications.map((notification) => (
                 <Link
@@ -109,12 +107,8 @@ export default function NotificationDropdown() {
                       }`}
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm text-gray-900">
-                        {notification.title}
-                      </p>
-                      <p className="text-sm text-gray-600 truncate">
-                        {notification.message}
-                      </p>
+                      <p className="font-medium text-sm text-gray-900">{notification.title}</p>
+                      <p className="text-sm text-gray-600 truncate">{notification.message}</p>
                       <p className="text-xs text-gray-400 mt-1">
                         {formatTime(notification.createdAt)}
                       </p>

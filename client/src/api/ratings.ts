@@ -7,8 +7,7 @@ export interface CreateRatingInput {
 }
 
 export const ratingsApi = {
-  getByRequestId: (requestId: string) =>
-    api.get<Rating | null>(`/requests/${requestId}/rating`),
+  getByRequestId: (requestId: string) => api.get<Rating | null>(`/requests/${requestId}/rating`),
 
   create: (requestId: string, input: CreateRatingInput) =>
     api.post<Rating>(`/requests/${requestId}/rating`, input),
