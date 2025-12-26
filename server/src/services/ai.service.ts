@@ -93,7 +93,7 @@ export interface ChatResponse {
 export async function chatWithAI(
   message: string,
   context?: ChatContext,
-  history?: GeminiChatMessage[]
+  _history?: GeminiChatMessage[]
 ): Promise<ChatResponse> {
   try {
     if (!env.GEMINI_API_KEY) {

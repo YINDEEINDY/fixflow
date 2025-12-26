@@ -67,8 +67,8 @@ export async function register(input: RegisterInput): Promise<AuthResult> {
     },
   });
 
-  const accessToken = generateAccessToken({ userId: user.id, role: user.role });
-  const refreshToken = generateRefreshToken({ userId: user.id, role: user.role });
+  const accessToken = generateAccessToken({ userId: user.id, id: user.id, role: user.role });
+  const refreshToken = generateRefreshToken({ userId: user.id, id: user.id, role: user.role });
 
   await prisma.refreshToken.create({
     data: {
@@ -113,8 +113,8 @@ export async function login(input: LoginInput): Promise<AuthResult> {
     throw new Error('ACCOUNT_DISABLED');
   }
 
-  const accessToken = generateAccessToken({ userId: user.id, role: user.role });
-  const refreshToken = generateRefreshToken({ userId: user.id, role: user.role });
+  const accessToken = generateAccessToken({ userId: user.id, id: user.id, role: user.role });
+  const refreshToken = generateRefreshToken({ userId: user.id, id: user.id, role: user.role });
 
   await prisma.refreshToken.create({
     data: {
@@ -170,8 +170,8 @@ export async function loginWithLine(input: LineLoginInput): Promise<AuthResult> 
     throw new Error('ACCOUNT_DISABLED');
   }
 
-  const accessToken = generateAccessToken({ userId: user.id, role: user.role });
-  const refreshToken = generateRefreshToken({ userId: user.id, role: user.role });
+  const accessToken = generateAccessToken({ userId: user.id, id: user.id, role: user.role });
+  const refreshToken = generateRefreshToken({ userId: user.id, id: user.id, role: user.role });
 
   await prisma.refreshToken.create({
     data: {
@@ -217,7 +217,7 @@ export async function refreshAccessToken(token: string): Promise<{ accessToken: 
     throw new Error('INVALID_REFRESH_TOKEN');
   }
 
-  const accessToken = generateAccessToken({ userId: user.id, role: user.role });
+  const accessToken = generateAccessToken({ userId: user.id, id: user.id, role: user.role });
 
   return { accessToken };
 }

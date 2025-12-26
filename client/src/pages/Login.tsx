@@ -1,10 +1,10 @@
-import { useState, useCallback, useEffect } from 'react';
-import { useNavigate, Link, useSearchParams } from 'react-router-dom';
+import { useState, useCallback } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
-import { Wrench, Mail, Lock, Loader2 } from 'lucide-react';
+import { Wrench, Mail, Lock } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
