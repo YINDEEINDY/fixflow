@@ -1,4 +1,5 @@
-import { apiClient, ApiResponse } from './client';
+import { api } from './client';
+import type { Priority } from '../types/index';
 
 export interface RequestTemplate {
   id: string;
@@ -7,7 +8,7 @@ export interface RequestTemplate {
   categoryId: string;
   title: string;
   content?: string;
-  priority: 'low' | 'normal' | 'high' | 'urgent';
+  priority: Priority;
   isActive: boolean;
   isPublic: boolean;
   usageCount: number;
@@ -33,7 +34,7 @@ export interface CreateTemplateInput {
   categoryId: string;
   title: string;
   content?: string;
-  priority?: 'low' | 'normal' | 'high' | 'urgent';
+  priority?: Priority;
   isPublic?: boolean;
 }
 
@@ -43,63 +44,35 @@ export interface UpdateTemplateInput {
   categoryId?: string;
   title?: string;
   content?: string;
-  priority?: 'low' | 'normal' | 'high' | 'urgent';
+  priority?: Priority;
   isPublic?: boolean;
   isActive?: boolean;
 }
 
-export const templateApi = {
-  // Get all templates
-  getAll: async (): Promise<ApiResponse<RequestTemplate[]>> => {
-    const response = await apiClient.get<ApiResponse<RequestTemplate[]>>('/templates');
-    return response.data;
-  },
+export const templatesApi = {
+  // Get all templates (includes user's private templates if authenticated)
+  getAll: () => api.get<RequestTemplate[]>('/templates'),
 
-  // Get popular templates
-  getPopular: async (limit: number = 5): Promise<ApiResponse<RequestTemplate[]>> => {
-    const response = await apiClient.get<ApiResponse<RequestTemplate[]>>(
-      `/templates/popular?limit=${limit}`
-    );
-    return response.data;
-  },
+  // Get popular templates (public only)
+  getPopular: (limit: number = 5) => api.get<RequestTemplate[]>(`/templates/popular?limit=${limit}`),
 
   // Get template by ID
-  getById: async (id: string): Promise<ApiResponse<RequestTemplate>> => {
-    const response = await apiClient.get<ApiResponse<RequestTemplate>>(`/templates/${id}`);
-    return response.data;
-  },
+  getById: (id: string) => api.get<RequestTemplate>(`/templates/${id}`),
 
   // Get templates by category
-  getByCategory: async (categoryId: string): Promise<ApiResponse<RequestTemplate[]>> => {
-    const response = await apiClient.get<ApiResponse<RequestTemplate[]>>(
-      `/templates/category/${categoryId}`
-    );
-    return response.data;
-  },
+  getByCategory: (categoryId: string) =>
+    api.get<RequestTemplate[]>(`/templates/category/${categoryId}`),
 
   // Create template
-  create: async (input: CreateTemplateInput): Promise<ApiResponse<RequestTemplate>> => {
-    const response = await apiClient.post<ApiResponse<RequestTemplate>>('/templates', input);
-    return response.data;
-  },
+  create: (input: CreateTemplateInput) => api.post<RequestTemplate>('/templates', input),
 
   // Update template
-  update: async (id: string, input: UpdateTemplateInput): Promise<ApiResponse<RequestTemplate>> => {
-    const response = await apiClient.put<ApiResponse<RequestTemplate>>(`/templates/${id}`, input);
-    return response.data;
-  },
+  update: (id: string, input: UpdateTemplateInput) =>
+    api.put<RequestTemplate>(`/templates/${id}`, input),
 
-  // Delete template
-  delete: async (id: string): Promise<ApiResponse<{ message: string }>> => {
-    const response = await apiClient.delete<ApiResponse<{ message: string }>>(`/templates/${id}`);
-    return response.data;
-  },
+  // Delete template (soft delete)
+  delete: (id: string) => api.delete<{ message: string }>(`/templates/${id}`),
 
   // Use template (increment usage count and get template data)
-  use: async (id: string): Promise<ApiResponse<RequestTemplate>> => {
-    const response = await apiClient.post<ApiResponse<RequestTemplate>>(`/templates/${id}/use`);
-    return response.data;
-  },
+  use: (id: string) => api.post<RequestTemplate>(`/templates/${id}/use`),
 };
-
-export default templateApi;
