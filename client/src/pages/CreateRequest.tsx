@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Send, Loader2, FileText, Save, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Send, Loader2, FileText, Save, ChevronDown, Sparkles, Check } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { MultiImageUpload } from '../components/ImageUpload';
 import { useRequestStore } from '../stores/request.store';
 import { templatesApi, RequestTemplate } from '../api/templates';
+import { suggestCategory, CategorySuggestion } from '../api/chat';
 import SaveTemplateModal from '../components/templates/SaveTemplateModal';
 import type { Priority } from '../types/index';
 
@@ -39,11 +40,62 @@ export default function CreateRequest() {
   const [showTemplateDropdown, setShowTemplateDropdown] = useState(false);
   const [showSaveTemplateModal, setShowSaveTemplateModal] = useState(false);
 
+  // AI Category Suggestion state
+  const [aiSuggestion, setAiSuggestion] = useState<CategorySuggestion | null>(null);
+  const [isLoadingSuggestion, setIsLoadingSuggestion] = useState(false);
+  const [suggestionApplied, setSuggestionApplied] = useState(false);
+
   useEffect(() => {
     fetchCategories();
     fetchLocations();
     loadTemplates();
   }, [fetchCategories, fetchLocations]);
+
+  // Debounced AI category suggestion
+  const fetchAiSuggestion = useCallback(async (title: string, description: string) => {
+    if (!title.trim() || title.length < 5) {
+      setAiSuggestion(null);
+      return;
+    }
+
+    setIsLoadingSuggestion(true);
+    setSuggestionApplied(false);
+    try {
+      const suggestion = await suggestCategory(title, description);
+      setAiSuggestion(suggestion);
+    } catch (error) {
+      console.error('Failed to get AI suggestion:', error);
+      setAiSuggestion(null);
+    } finally {
+      setIsLoadingSuggestion(false);
+    }
+  }, []);
+
+  // Debounce effect for title/description changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (formData.title.trim() && !formData.categoryId) {
+        fetchAiSuggestion(formData.title, formData.description);
+      }
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, [formData.title, formData.description, formData.categoryId, fetchAiSuggestion]);
+
+  // Apply AI suggestion
+  const applyAiSuggestion = () => {
+    if (aiSuggestion) {
+      setFormData((prev) => ({ ...prev, categoryId: aiSuggestion.categoryId }));
+      setSuggestionApplied(true);
+      if (errors.categoryId) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.categoryId;
+          return newErrors;
+        });
+      }
+    }
+  };
 
   const loadTemplates = async () => {
     setIsLoadingTemplates(true);
@@ -236,6 +288,57 @@ export default function CreateRequest() {
               </select>
               {errors.categoryId && (
                 <p className="mt-1 text-sm text-red-500">{errors.categoryId}</p>
+              )}
+
+              {/* AI Category Suggestion */}
+              {isLoadingSuggestion && (
+                <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>AI กำลังวิเคราะห์หมวดหมู่...</span>
+                </div>
+              )}
+
+              {aiSuggestion && !formData.categoryId && !isLoadingSuggestion && (
+                <div className="mt-2 p-3 bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <Sparkles className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-purple-900">AI แนะนำ:</span>
+                        <span className="text-purple-700">
+                          {categories.find((c) => c.id === aiSuggestion.categoryId)?.nameTh || aiSuggestion.categoryName}
+                        </span>
+                        <span className={`text-xs px-1.5 py-0.5 rounded ${
+                          aiSuggestion.confidence === 'high'
+                            ? 'bg-green-100 text-green-700'
+                            : aiSuggestion.confidence === 'medium'
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-gray-100 text-gray-600'
+                        }`}>
+                          {aiSuggestion.confidence === 'high' ? 'มั่นใจสูง' : aiSuggestion.confidence === 'medium' ? 'มั่นใจปานกลาง' : 'ไม่แน่ใจ'}
+                        </span>
+                      </div>
+                      <p className="text-sm text-purple-600 mt-1">{aiSuggestion.reason}</p>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={applyAiSuggestion}
+                        className="mt-2 bg-white border-purple-300 text-purple-700 hover:bg-purple-50"
+                      >
+                        <Check className="w-4 h-4 mr-1" />
+                        ใช้หมวดหมู่นี้
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {suggestionApplied && (
+                <div className="mt-2 flex items-center gap-2 text-sm text-green-600">
+                  <Check className="w-4 h-4" />
+                  <span>ใช้หมวดหมู่ที่ AI แนะนำแล้ว</span>
+                </div>
               )}
             </div>
 

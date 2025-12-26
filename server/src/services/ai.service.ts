@@ -211,3 +211,108 @@ export async function getChatHistory(userId: string, limit = 50) {
     return [];
   }
 }
+
+/**
+ * Suggest category for a maintenance request using AI
+ */
+export interface SuggestCategoryInput {
+  title: string;
+  description?: string;
+}
+
+export interface SuggestCategoryResult {
+  categoryId: string;
+  categoryName: string;
+  confidence: 'high' | 'medium' | 'low';
+  reason: string;
+}
+
+export async function suggestCategory(
+  input: SuggestCategoryInput
+): Promise<SuggestCategoryResult | null> {
+  try {
+    if (!env.GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY not configured');
+    }
+
+    // Get all active categories
+    const categories = await prisma.category.findMany({
+      where: { isActive: true },
+      orderBy: { sortOrder: 'asc' },
+    });
+
+    if (categories.length === 0) {
+      return null;
+    }
+
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+
+    const categoryList = categories
+      .map((c) => `- ${c.name} (${c.nameTh})`)
+      .join('\n');
+
+    const prompt = `คุณเป็นผู้เชี่ยวชาญในการจัดหมวดหมู่งานแจ้งซ่อม/บำรุงรักษา
+
+งานแจ้งซ่อมที่ต้องจัดหมวดหมู่:
+หัวข้อ: "${input.title}"
+${input.description ? `รายละเอียด: "${input.description}"` : ''}
+
+หมวดหมู่ที่มีในระบบ:
+${categoryList}
+
+กรุณาวิเคราะห์และเลือกหมวดหมู่ที่เหมาะสมที่สุด
+
+ตอบในรูปแบบ JSON เท่านั้น (ไม่ต้องมี markdown):
+{
+  "categoryName": "ชื่อหมวดหมู่ภาษาอังกฤษ",
+  "confidence": "high/medium/low",
+  "reason": "เหตุผลสั้นๆ ภาษาไทย"
+}`;
+
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const text = response.text().trim();
+
+    // Parse JSON response
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      console.error('AI response is not valid JSON:', text);
+      return null;
+    }
+
+    const parsed = JSON.parse(jsonMatch[0]);
+
+    // Find the category by name
+    const matchedCategory = categories.find(
+      (c) =>
+        c.name.toLowerCase() === parsed.categoryName?.toLowerCase() ||
+        c.nameTh === parsed.categoryName
+    );
+
+    if (!matchedCategory) {
+      console.error('Category not found:', parsed.categoryName);
+      // Return the first category as fallback with low confidence
+      return {
+        categoryId: categories[0].id,
+        categoryName: categories[0].name,
+        confidence: 'low',
+        reason: 'ไม่สามารถระบุหมวดหมู่ได้ชัดเจน กรุณาเลือกด้วยตนเอง',
+      };
+    }
+
+    return {
+      categoryId: matchedCategory.id,
+      categoryName: matchedCategory.name,
+      confidence: parsed.confidence || 'medium',
+      reason: parsed.reason || 'วิเคราะห์จากหัวข้อและรายละเอียด',
+    };
+  } catch (error) {
+    console.error('Error suggesting category:', error);
+    if (error instanceof Error) {
+      if (error.message.includes('API key') || error.message.includes('API_KEY')) {
+        throw new Error('AI_NOT_CONFIGURED');
+      }
+    }
+    throw new Error('AI_SERVICE_ERROR');
+  }
+}

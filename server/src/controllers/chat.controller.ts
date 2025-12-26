@@ -106,3 +106,66 @@ export async function getChatHistory(req: AuthRequest, res: Response): Promise<v
     throw error;
   }
 }
+
+const suggestCategorySchema = z.object({
+  title: z.string().min(1, 'Title is required').max(200, 'Title too long'),
+  description: z.string().max(2000, 'Description too long').optional(),
+});
+
+/**
+ * POST /chat/suggest-category - Get AI suggestion for request category
+ */
+export async function suggestCategory(req: AuthRequest, res: Response): Promise<void> {
+  try {
+    if (!req.user) {
+      sendError(res, 'UNAUTHORIZED', 'Not authenticated', 401);
+      return;
+    }
+
+    const input = suggestCategorySchema.parse(req.body);
+
+    const suggestion = await aiService.suggestCategory({
+      title: input.title,
+      description: input.description,
+    });
+
+    if (!suggestion) {
+      sendError(res, 'NO_SUGGESTION', 'Could not generate category suggestion', 404);
+      return;
+    }
+
+    sendSuccess(res, { suggestion });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const details = error.issues.map((e) => ({
+        field: e.path.join('.'),
+        message: e.message,
+      }));
+      sendError(res, 'VALIDATION_ERROR', 'Validation failed', 400, details);
+      return;
+    }
+
+    if (error instanceof Error) {
+      if (error.message === 'AI_NOT_CONFIGURED') {
+        sendError(
+          res,
+          'AI_NOT_CONFIGURED',
+          'AI service is not configured. Please contact administrator.',
+          503
+        );
+        return;
+      }
+      if (error.message === 'AI_SERVICE_ERROR') {
+        sendError(
+          res,
+          'AI_SERVICE_ERROR',
+          'AI service encountered an error. Please try again later.',
+          500
+        );
+        return;
+      }
+    }
+
+    throw error;
+  }
+}

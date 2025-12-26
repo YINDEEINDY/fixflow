@@ -29,4 +29,7 @@ router.post('/', chatLimiter, chatController.chat);
 // GET /chat/history - Get chat history
 router.get('/history', chatController.getChatHistory);
 
+// POST /chat/suggest-category - Get AI suggestion for request category
+router.post('/suggest-category', chatLimiter, chatController.suggestCategory);
+
 export default router;
