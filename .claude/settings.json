@@ -1,0 +1,37 @@
+{
+  "model": "opus",
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(pnpm:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(git:*)",
+      "Bash(cd:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(mkdir:*)",
+      "Read(**/package.json)",
+      "Read(**/tsconfig.json)",
+      "Read(**/prisma/schema.prisma)",
+      "Read(**/CLAUDE.md)",
+      "Read(**/*.ts)",
+      "Read(**/*.tsx)",
+      "Edit(**/*.ts)",
+      "Edit(**/*.tsx)",
+      "Edit(**/*.json)",
+      "Edit(**/*.prisma)",
+      "Edit(**/*.md)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/secrets/**)",
+      "Edit(.env)",
+      "Edit(.env.*)"
+    ]
+  },
+  "env": {
+    "NODE_ENV": "development"
+  }
+}

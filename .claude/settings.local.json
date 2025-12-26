@@ -1,8 +1,10 @@
 {
+  "_comment": "Personal settings - DO NOT COMMIT TO GIT",
+  "model": "opus",
   "permissions": {
     "allow": [
-      "Bash(git add:*)",
-      "Bash(git push:*)"
+      "Bash(railway:*)",
+      "Bash(docker:*)"
     ]
   }
 }
