@@ -161,13 +161,14 @@ model Request {
   slaDeadline   DateTime?     @map("sla_deadline")
   slaBreached   Boolean       @default(false) @map("sla_breached")
   firstResponseAt DateTime?   @map("first_response_at")
-  jobNotes      JobNote[]
-  rating        Rating?
-  requestLogs   RequestLog[]
-  category      Category      @relation(fields: [categoryId], references: [id])
-  location      Location      @relation(fields: [locationId], references: [id])
-  technician    Technician?   @relation(fields: [technicianId], references: [id])
-  user          User          @relation(fields: [userId], references: [id])
+  jobNotes            JobNote[]
+  rating              Rating?
+  requestLogs         RequestLog[]
+  technicianFeedback  TechnicianFeedback?
+  category            Category      @relation(fields: [categoryId], references: [id])
+  location            Location      @relation(fields: [locationId], references: [id])
+  technician          Technician?   @relation(fields: [technicianId], references: [id])
+  user                User          @relation(fields: [userId], references: [id])
 
   @@index([categoryId])
   @@index([createdAt(sort: Desc)])
@@ -236,11 +237,34 @@ model Technician {
   maxJobsPerDay Int      @default(5) @map("max_jobs_per_day")
   createdAt    DateTime  @default(now()) @map("created_at")
   rating       Float?    @default(0)
+  feedbacks    TechnicianFeedback[]
   jobNotes     JobNote[]
   requests     Request[]
   user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("technicians")
+}
+
+model TechnicianFeedback {
+  id           String     @id @default(uuid())
+  technicianId String     @map("technician_id")
+  requestId    String     @unique @map("request_id")
+  adminId      String     @map("admin_id")
+  score        Int        // 1-5 stars
+  comment      String?    // Optional comment
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  technician   Technician @relation(fields: [technicianId], references: [id], onDelete: Cascade)
+  request      Request    @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  admin        User       @relation("AdminFeedbacks", fields: [adminId], references: [id])
+
+  @@unique([technicianId, requestId])
+  @@index([technicianId])
+  @@index([requestId])
+  @@index([adminId])
+  @@index([createdAt(sort: Desc)])
+  @@map("technician_feedbacks")
 }
 
 model User {
@@ -265,6 +289,7 @@ model User {
   passwordResetTokens  PasswordResetToken[]
   chatMessages         ChatMessage[]
   createdTemplates     RequestTemplate[]
+  givenFeedbacks       TechnicianFeedback[] @relation("AdminFeedbacks")
 
   @@map("users")
 }

@@ -13,6 +13,7 @@ import exportRoutes from './export.routes.js';
 import chatRoutes from './chat.routes.js';
 import templateRoutes from './template.routes.js';
 import sseRoutes from './sse.routes.js';
+import technicianFeedbackRoutes from './technician-feedback.routes.js';
 
 const router = Router();
 
@@ -20,6 +21,7 @@ router.use('/auth', authRoutes);
 router.use('/requests', requestRoutes);
 router.use('/', noteRoutes); // /requests/:id/notes
 router.use('/', ratingRoutes); // /requests/:id/rating
+router.use('/', technicianFeedbackRoutes); // /technician-feedbacks, /requests/:id/technician-feedback
 router.use('/notifications', notificationRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/admin', adminRoutes);

@@ -15,12 +15,15 @@ import {
   CheckCircle,
   Star,
   Image as ImageIcon,
+  MessageSquare,
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { useRequestStore } from '../stores/request.store';
 import { useAuthStore } from '../stores/auth.store';
 import { ratingApi, type Rating } from '../api/rating';
+import { technicianFeedbackApi, type TechnicianFeedback } from '../api/technicianFeedback';
+import TechnicianFeedbackModal from '../components/TechnicianFeedbackModal';
 
 const statusColors: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -95,6 +98,10 @@ export default function RequestDetail() {
   const [ratingComment, setRatingComment] = useState('');
   const [isSubmittingRating, setIsSubmittingRating] = useState(false);
 
+  // Technician Feedback state (admin feedback for technician)
+  const [technicianFeedback, setTechnicianFeedback] = useState<TechnicianFeedback | null>(null);
+  const [showTechnicianFeedbackModal, setShowTechnicianFeedbackModal] = useState(false);
+
   useEffect(() => {
     if (id) {
       fetchRequestById(id);
@@ -102,6 +109,12 @@ export default function RequestDetail() {
       ratingApi.getRating(id).then((res) => {
         if (res.success && res.data) {
           setRating(res.data);
+        }
+      });
+      // Fetch technician feedback
+      technicianFeedbackApi.getFeedbackByRequestId(id).then((res) => {
+        if (res.success && res.data) {
+          setTechnicianFeedback(res.data);
         }
       });
     }
@@ -221,6 +234,8 @@ export default function RequestDetail() {
   const isTechnician = user?.role === 'technician';
   const isAssignedTechnician = request.technician?.user.id === user?.id;
   const canRate = isOwner && request.status === 'completed' && !rating;
+  // Admin can give technician feedback when request is completed, has a technician, and no feedback yet
+  const canGiveTechnicianFeedback = isAdmin && request.status === 'completed' && request.technician && !technicianFeedback;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -343,6 +358,39 @@ export default function RequestDetail() {
                 {rating.comment && <p className="text-gray-600 mt-2">{rating.comment}</p>}
                 <p className="text-xs text-gray-400 mt-2">
                   ให้คะแนนโดย {rating.user.name} เมื่อ {formatDate(rating.createdAt)}
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Technician Feedback Card (Admin's feedback for technician) */}
+          {technicianFeedback && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-indigo-500" />
+                  Feedback ช่าง
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-1 mb-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className={`w-6 h-6 ${
+                        star <= technicianFeedback.score ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
+                      }`}
+                    />
+                  ))}
+                  <span className="ml-2 text-lg font-medium">{technicianFeedback.score}/5</span>
+                </div>
+                {technicianFeedback.comment && (
+                  <p className="text-gray-600 dark:text-gray-300 mt-2 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                    "{technicianFeedback.comment}"
+                  </p>
+                )}
+                <p className="text-xs text-gray-400 mt-2">
+                  โดย {technicianFeedback.admin.name} เมื่อ {formatDate(technicianFeedback.createdAt)}
                 </p>
               </CardContent>
             </Card>
@@ -528,6 +576,17 @@ export default function RequestDetail() {
                 >
                   <Star className="w-4 h-4 mr-2" />
                   ให้คะแนน
+                </Button>
+              )}
+
+              {/* Technician Feedback button (Admin only) */}
+              {canGiveTechnicianFeedback && (
+                <Button
+                  className="w-full bg-indigo-500 hover:bg-indigo-600"
+                  onClick={() => setShowTechnicianFeedbackModal(true)}
+                >
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                  ให้ Feedback ช่าง
                 </Button>
               )}
 
@@ -782,6 +841,27 @@ export default function RequestDetail() {
             </CardContent>
           </Card>
         </div>
+      )}
+
+      {/* Technician Feedback Modal */}
+      {showTechnicianFeedbackModal && request.technician && (
+        <TechnicianFeedbackModal
+          requestId={request.id}
+          requestNumber={request.requestNumber}
+          technicianName={request.technician.user.name}
+          onClose={() => setShowTechnicianFeedbackModal(false)}
+          onSuccess={() => {
+            setShowTechnicianFeedbackModal(false);
+            // Refetch technician feedback
+            if (id) {
+              technicianFeedbackApi.getFeedbackByRequestId(id).then((res) => {
+                if (res.success && res.data) {
+                  setTechnicianFeedback(res.data);
+                }
+              });
+            }
+          }}
+        />
       )}
     </div>
   );
