@@ -1,9 +1,10 @@
 import { useState } from 'react';
+// Force rebuild
 import { X, Loader2, Save } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
-import { templatesApi, CreateTemplateInput } from '../../api/templates';
+import { templatesApi, type CreateTemplateInput } from '../../api/templates';
 import type { Priority } from '../../types/index';
 
 interface SaveTemplateModalProps {

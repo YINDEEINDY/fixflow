@@ -6,8 +6,8 @@ import { Input } from '../components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { MultiImageUpload } from '../components/ImageUpload';
 import { useRequestStore } from '../stores/request.store';
-import { templatesApi, RequestTemplate } from '../api/templates';
-import { suggestCategory, CategorySuggestion } from '../api/chat';
+import { templatesApi, type RequestTemplate } from '../api/templates';
+import { suggestCategory, type CategorySuggestion } from '../api/chat';
 import SaveTemplateModal from '../components/templates/SaveTemplateModal';
 import type { Priority } from '../types/index';
 
