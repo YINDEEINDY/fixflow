@@ -1,5 +1,8 @@
 import * as settingsService from './settings.service.js';
 
+// Set to true to disable all Discord notifications
+const DISCORD_DISABLED = true;
+
 interface DiscordEmbed {
   title?: string;
   description?: string;
@@ -26,6 +29,12 @@ const COLORS = {
 };
 
 export async function sendDiscordNotify(payload: DiscordWebhookPayload): Promise<boolean> {
+  // Check if Discord is disabled via flag
+  if (DISCORD_DISABLED) {
+    console.log('Discord notifications are temporarily disabled');
+    return false;
+  }
+
   try {
     const settings = await settingsService.getSettings();
 

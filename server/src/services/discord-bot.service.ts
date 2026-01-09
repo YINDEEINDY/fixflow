@@ -1,5 +1,8 @@
 import * as settingsService from './settings.service.js';
 
+// Set to true to disable all Discord Bot features
+const DISCORD_BOT_DISABLED = true;
+
 const DISCORD_API_BASE = 'https://discord.com/api/v10';
 
 interface DiscordChannel {
@@ -80,6 +83,12 @@ export async function createRequestChannel(request: {
   userName: string;
   description?: string;
 }): Promise<string | null> {
+  // Check if Discord Bot is disabled
+  if (DISCORD_BOT_DISABLED) {
+    console.log('Discord channel creation is temporarily disabled');
+    return null;
+  }
+
   try {
     const config = await getDiscordConfig();
 
@@ -175,6 +184,12 @@ export async function sendNotification(message: {
   content?: string;
   embeds?: DiscordEmbed[];
 }): Promise<boolean> {
+  // Check if Discord Bot is disabled
+  if (DISCORD_BOT_DISABLED) {
+    console.log('Discord Bot notifications are temporarily disabled');
+    return false;
+  }
+
   try {
     const config = await getDiscordConfig();
 
