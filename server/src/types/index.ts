@@ -3,6 +3,7 @@ import { Role } from '@prisma/client';
 
 export interface JwtPayload {
   userId: string;
+  id: string; // Alias for userId for backward compatibility
   role: Role;
 }
 
