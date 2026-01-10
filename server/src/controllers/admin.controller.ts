@@ -386,7 +386,7 @@ export async function getMonthlyTrend(req: AuthRequest, res: Response) {
 export async function bulkAssignRequests(req: AuthRequest, res: Response) {
   try {
     const { requestIds, technicianId, note } = req.body;
-    const adminId = req.user?.id;
+    const adminId = req.user?.userId;
 
     if (!adminId) {
       return res.status(401).json({
@@ -444,7 +444,7 @@ export async function bulkAssignRequests(req: AuthRequest, res: Response) {
 export async function bulkUpdateStatus(req: AuthRequest, res: Response) {
   try {
     const { requestIds, status, note } = req.body;
-    const userId = req.user?.id;
+    const userId = req.user?.userId;
 
     if (!userId) {
       return res.status(401).json({

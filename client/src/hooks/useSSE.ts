@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { useAuthStore } from '../stores/auth.store';
+import { getAccessToken } from '../api/client';
 
 export type SSEEventType =
   | 'connected'
@@ -27,11 +28,12 @@ export function useSSE() {
   const handlersRef = useRef<Map<SSEEventType, Set<EventHandler>>>(new Map());
   const [isConnected, setIsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reconnectAttemptsRef = useRef(0);
   const maxReconnectAttempts = 5;
 
-  const { isAuthenticated, token } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
+  const token = getAccessToken();
 
   const connect = useCallback(() => {
     if (!isAuthenticated || !token) {

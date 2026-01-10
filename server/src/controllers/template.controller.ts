@@ -6,7 +6,7 @@ import { sendSuccess, sendError } from '../utils/response.js';
 // Get all templates
 export async function getTemplates(req: AuthRequest, res: Response) {
   try {
-    const userId = req.user?.id;
+    const userId = req.user?.userId;
     const templates = await templateService.getTemplates(userId);
     return sendSuccess(res, templates);
   } catch (err) {
@@ -58,7 +58,7 @@ export async function getTemplatesByCategory(req: AuthRequest, res: Response) {
 // Create template
 export async function createTemplate(req: AuthRequest, res: Response) {
   try {
-    const userId = req.user?.id;
+    const userId = req.user?.userId;
     const { name, description, categoryId, title, content, priority, isPublic } = req.body;
 
     if (!name || !categoryId || !title) {
@@ -87,7 +87,7 @@ export async function createTemplate(req: AuthRequest, res: Response) {
 export async function updateTemplate(req: AuthRequest, res: Response) {
   try {
     const { id } = req.params;
-    const userId = req.user?.id;
+    const userId = req.user?.userId;
     const userRole = req.user?.role;
 
     if (!userId || !userRole) {
@@ -113,7 +113,7 @@ export async function updateTemplate(req: AuthRequest, res: Response) {
 export async function deleteTemplate(req: AuthRequest, res: Response) {
   try {
     const { id } = req.params;
-    const userId = req.user?.id;
+    const userId = req.user?.userId;
     const userRole = req.user?.role;
 
     if (!userId || !userRole) {

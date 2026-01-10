@@ -8,7 +8,7 @@ const router = Router();
 
 // SSE endpoint - clients connect here for real-time updates
 router.get('/events', authenticate, (req: AuthRequest, res: Response) => {
-  const userId = req.user?.id;
+  const userId = req.user?.userId;
   const role = req.user?.role;
 
   if (!userId || !role) {

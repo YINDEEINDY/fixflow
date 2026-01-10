@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FileText, Star, ChevronRight, Loader2, Zap } from 'lucide-react';
-import { templateApi, RequestTemplate } from '../../api/templates';
+import { templatesApi, type RequestTemplate } from '../../api/templates';
 import { getPriorityBadgeColor, getPriorityLabel } from '../../constants/status';
 import { cn } from '../../utils/cn';
 
@@ -28,8 +28,8 @@ export function TemplateSelector({
     setIsLoading(true);
     try {
       const [allRes, popularRes] = await Promise.all([
-        templateApi.getAll(),
-        templateApi.getPopular(5),
+        templatesApi.getAll(),
+        templatesApi.getPopular(5),
       ]);
 
       if (allRes.success && allRes.data) {
@@ -48,7 +48,7 @@ export function TemplateSelector({
   async function handleSelect(template: RequestTemplate) {
     try {
       // Increment usage count
-      await templateApi.use(template.id);
+      await templatesApi.use(template.id);
       onSelect(template);
     } catch (error) {
       console.error('Failed to use template:', error);

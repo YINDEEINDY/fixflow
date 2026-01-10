@@ -1,5 +1,4 @@
 {
-  "model": "opus",
   "permissions": {
     "allow": [
       "Bash(npm run:*)",
@@ -30,8 +29,5 @@
       "Edit(.env)",
       "Edit(.env.*)"
     ]
-  },
-  "env": {
-    "NODE_ENV": "development"
   }
 }
