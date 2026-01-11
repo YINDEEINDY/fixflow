@@ -11,6 +11,10 @@ export interface SystemSettings {
   discordCategoryId: string | null;
   discordNotifyChannelId: string | null;
   discordEnabled: boolean;
+  // LINE Bot
+  lineBotGroupId: string | null;
+  lineBotEnabled: boolean;
+  // Email
   emailSmtpHost: string | null;
   emailSmtpPort: number | null;
   emailSmtpUser: string | null;
@@ -43,4 +47,6 @@ export const settingsApi = {
     api.post<{ message: string; guilds?: string[] }>('/settings/test-discord-bot'),
 
   getDiscordChannels: () => api.get<DiscordChannel[]>('/settings/discord-channels'),
+
+  testLineBot: () => api.post<{ message: string }>('/settings/test-line-bot'),
 };

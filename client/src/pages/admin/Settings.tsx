@@ -12,6 +12,7 @@ import {
   AlertCircle,
   Bot,
   RefreshCw,
+  MessageCircle,
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
@@ -40,6 +41,7 @@ export default function Settings() {
   const [isSaving, setIsSaving] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
   const [isTestingBot, setIsTestingBot] = useState(false);
+  const [isTestingLineBot, setIsTestingLineBot] = useState(false);
   const [isLoadingChannels, setIsLoadingChannels] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [settings, setSettings] = useState<SystemSettings | null>(null);
@@ -144,6 +146,27 @@ export default function Settings() {
       console.error('Failed to load channels:', err);
     } finally {
       setIsLoadingChannels(false);
+    }
+  };
+
+  const handleTestLineBot = async () => {
+    setIsTestingLineBot(true);
+    setMessage(null);
+
+    try {
+      const response = await settingsApi.testLineBot();
+      if (response.success) {
+        setMessage({ type: 'success', text: 'ส่งข้อความทดสอบ LINE Bot สำเร็จ' });
+      } else {
+        setMessage({
+          type: 'error',
+          text: response.error?.message || 'ไม่สามารถส่งข้อความทดสอบได้',
+        });
+      }
+    } catch (err) {
+      setMessage({ type: 'error', text: 'เกิดข้อผิดพลาดในการทดสอบ LINE Bot' });
+    } finally {
+      setIsTestingLineBot(false);
     }
   };
 
@@ -415,6 +438,60 @@ export default function Settings() {
                 )}
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* LINE Bot Settings */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MessageCircle className="w-5 h-5" />
+              LINE Bot
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="lineBotEnabled"
+                checked={settings.lineBotEnabled}
+                onChange={(e) => updateSetting('lineBotEnabled', e.target.checked)}
+                className="rounded border-gray-300"
+              />
+              <label htmlFor="lineBotEnabled" className="text-sm text-gray-700">
+                เปิดใช้งาน LINE Bot แจ้งเตือน
+              </label>
+            </div>
+            <Input
+              label="Group ID"
+              value={settings.lineBotGroupId || ''}
+              onChange={(e) => updateSetting('lineBotGroupId', e.target.value || null)}
+              placeholder="Cxxxxxxxxxx"
+              helperText="เพิ่ม Bot เข้ากลุ่ม LINE แล้วส่งข้อความ จะเห็น Group ID ใน server logs"
+            />
+            <div className="text-sm text-gray-500 bg-gray-50 p-3 rounded-lg">
+              <p className="font-medium mb-1">วิธีตั้งค่า LINE Bot:</p>
+              <ol className="list-decimal list-inside space-y-1">
+                <li>สร้าง LINE Messaging API Channel ที่ LINE Developers Console</li>
+                <li>คัดลอก Channel Access Token และตั้งค่าใน Environment Variables</li>
+                <li>ตั้งค่า Webhook URL เป็น: <code className="bg-gray-200 px-1 rounded">{window.location.origin.replace('vercel.app', 'onrender.com').replace('localhost:5173', 'localhost:3001')}/api/line/webhook</code></li>
+                <li>เพิ่ม Bot เข้ากลุ่ม LINE ที่ต้องการรับแจ้งเตือน</li>
+                <li>ส่งข้อความในกลุ่มเพื่อให้ระบบจับ Group ID</li>
+              </ol>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleTestLineBot}
+              disabled={isTestingLineBot || !settings.lineBotEnabled}
+            >
+              {isTestingLineBot ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <Send className="w-4 h-4 mr-2" />
+              )}
+              ทดสอบส่งข้อความ
+            </Button>
           </CardContent>
         </Card>
 
