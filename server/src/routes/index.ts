@@ -14,6 +14,7 @@ import chatRoutes from './chat.routes.js';
 import templateRoutes from './template.routes.js';
 import sseRoutes from './sse.routes.js';
 import technicianFeedbackRoutes from './technician-feedback.routes.js';
+import externalFormRoutes from './external-form.routes.js';
 
 const router = Router();
 
@@ -32,6 +33,7 @@ router.use('/export', exportRoutes);
 router.use('/chat', chatRoutes);
 router.use('/templates', templateRoutes);
 router.use('/sse', sseRoutes);
+router.use('/external-form', externalFormRoutes);
 
 // Health check
 router.get('/health', (_req, res) => {

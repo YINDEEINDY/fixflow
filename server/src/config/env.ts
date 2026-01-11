@@ -26,6 +26,8 @@ const envSchema = z.object({
   RECAPTCHA_SECRET_KEY: z.string().optional(),
   // Google Gemini AI
   GEMINI_API_KEY: z.string().optional(),
+  // External Form API Key (for Google Form integration)
+  EXTERNAL_FORM_API_KEY: z.string().optional(),
   PORT: z.string().default('3001'),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
