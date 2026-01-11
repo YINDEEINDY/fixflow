@@ -16,11 +16,11 @@
 
 // ==================== CONFIG ====================
 const CONFIG = {
-  // URL ของ FixFlow API (เปลี่ยนเป็น URL ของคุณ)
-  API_URL: 'https://fixflow-api.onrender.com/api',
+  // URL ของ FixFlow API
+  API_URL: 'https://fixflow-xvwp.onrender.com/api',
 
-  // API Key สำหรับ External Form (สร้างใน Render environment variables)
-  API_KEY: 'YOUR_EXTERNAL_FORM_API_KEY_HERE',
+  // API Key สำหรับ External Form
+  API_KEY: '4b10988d13afbcb9f50a4b258183cafc76c90e7b35408f5949c2aea7233ba049',
 
   // Map ชื่อ field ใน Google Form กับ FixFlow
   // เปลี่ยนชื่อตามคำถามใน Form ของคุณ

@@ -20,6 +20,7 @@ const router = Router();
 
 router.use('/auth', authRoutes);
 router.use('/requests', requestRoutes);
+router.use('/external-form', externalFormRoutes); // Must be before '/' routes
 router.use('/', noteRoutes); // /requests/:id/notes
 router.use('/', ratingRoutes); // /requests/:id/rating
 router.use('/', technicianFeedbackRoutes); // /technician-feedbacks, /requests/:id/technician-feedback
@@ -33,7 +34,6 @@ router.use('/export', exportRoutes);
 router.use('/chat', chatRoutes);
 router.use('/templates', templateRoutes);
 router.use('/sse', sseRoutes);
-router.use('/external-form', externalFormRoutes);
 
 // Health check
 router.get('/health', (_req, res) => {
