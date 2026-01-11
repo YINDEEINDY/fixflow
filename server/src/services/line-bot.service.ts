@@ -41,6 +41,15 @@ interface FlexComponent {
   contents?: FlexComponent[];
   margin?: string;
   flex?: number;
+  action?: {
+    type: 'uri' | 'message' | 'postback';
+    label?: string;
+    uri?: string;
+    text?: string;
+    data?: string;
+  };
+  style?: 'primary' | 'secondary' | 'link';
+  height?: string;
 }
 
 interface FlexImage {
@@ -103,14 +112,43 @@ export async function sendLineBotMessage(messages: LineMessage[], to?: string): 
   }
 }
 
-// Helper to create Flex Message bubble
+// Helper to create Flex Message bubble with optional action button
 function createFlexBubble(
   title: string,
   titleColor: string,
   description: string,
   fields: { label: string; value: string }[],
-  footerText: string
+  footerText: string,
+  actionUrl?: string
 ): FlexContainer {
+  const footerContents: FlexComponent[] = [];
+
+  // Add action button if URL is provided
+  if (actionUrl) {
+    footerContents.push({
+      type: 'button',
+      style: 'primary',
+      height: 'sm',
+      action: {
+        type: 'uri',
+        label: 'ดูรายละเอียด',
+        uri: actionUrl,
+      },
+    });
+    footerContents.push({
+      type: 'spacer',
+      size: 'sm',
+    } as FlexComponent);
+  }
+
+  footerContents.push({
+    type: 'text',
+    text: footerText,
+    size: 'xs',
+    color: '#999999',
+    margin: actionUrl ? 'md' : undefined,
+  });
+
   return {
     type: 'bubble',
     styles: {
@@ -174,27 +212,30 @@ function createFlexBubble(
     footer: {
       type: 'box',
       layout: 'vertical',
-      contents: [
-        {
-          type: 'text',
-          text: footerText,
-          size: 'xs',
-          color: '#999999',
-        },
-      ],
+      contents: footerContents,
       paddingAll: '10px',
+      spacing: 'sm',
     },
   };
 }
 
+// Helper to generate request detail URL
+function getRequestDetailUrl(requestId: string): string {
+  return `${env.APP_URL}/requests/${requestId}`;
+}
+
 // Notification templates
 export async function notifyNewRequest(request: {
+  id: string;
   requestNumber: string;
   title: string;
+  description?: string;
   category: string;
   location: string;
   priority: string;
   userName: string;
+  userPhone?: string;
+  createdAt?: Date;
 }): Promise<boolean> {
   const priorityLabels: Record<string, string> = {
     low: '🟢 ต่ำ',
@@ -210,43 +251,72 @@ export async function notifyNewRequest(request: {
     urgent: COLORS.error,
   };
 
+  const fields = [
+    { label: 'เลขที่', value: request.requestNumber },
+    { label: 'หมวดหมู่', value: request.category },
+    { label: 'ความเร่งด่วน', value: priorityLabels[request.priority] || request.priority },
+    { label: 'สถานที่', value: request.location },
+    { label: 'ผู้แจ้ง', value: request.userName },
+  ];
+
+  // Add phone if available
+  if (request.userPhone) {
+    fields.push({ label: 'เบอร์โทร', value: request.userPhone });
+  }
+
+  // Add description if available (truncate if too long)
+  if (request.description) {
+    const desc = request.description.length > 100
+      ? request.description.substring(0, 100) + '...'
+      : request.description;
+    fields.push({ label: 'รายละเอียด', value: desc });
+  }
+
   const flexContent = createFlexBubble(
     '📋 แจ้งซ่อมใหม่',
     priorityColors[request.priority] || COLORS.info,
     request.title,
-    [
-      { label: 'เลขที่', value: request.requestNumber },
-      { label: 'หมวดหมู่', value: request.category },
-      { label: 'ความเร่งด่วน', value: priorityLabels[request.priority] || request.priority },
-      { label: 'สถานที่', value: request.location },
-      { label: 'ผู้แจ้ง', value: request.userName },
-    ],
-    `FixFlow • ${new Date().toLocaleString('th-TH')}`
+    fields,
+    `FixFlow • ${new Date().toLocaleString('th-TH')}`,
+    getRequestDetailUrl(request.id)
   );
 
   return sendLineBotMessage([
     {
       type: 'flex',
-      altText: `แจ้งซ่อมใหม่: ${request.requestNumber}`,
+      altText: `แจ้งซ่อมใหม่: ${request.requestNumber} - ${request.title}`,
       contents: flexContent,
     },
   ]);
 }
 
 export async function notifyRequestAssigned(request: {
+  id: string;
   requestNumber: string;
   title: string;
   technicianName: string;
+  category?: string;
+  location?: string;
 }): Promise<boolean> {
+  const fields = [
+    { label: 'เลขที่', value: request.requestNumber },
+    { label: 'ช่าง', value: request.technicianName },
+  ];
+
+  if (request.category) {
+    fields.push({ label: 'หมวดหมู่', value: request.category });
+  }
+  if (request.location) {
+    fields.push({ label: 'สถานที่', value: request.location });
+  }
+
   const flexContent = createFlexBubble(
     '🔧 มอบหมายงาน',
     COLORS.purple,
     request.title,
-    [
-      { label: 'เลขที่', value: request.requestNumber },
-      { label: 'ช่าง', value: request.technicianName },
-    ],
-    `FixFlow • ${new Date().toLocaleString('th-TH')}`
+    fields,
+    `FixFlow • ${new Date().toLocaleString('th-TH')}`,
+    getRequestDetailUrl(request.id)
   );
 
   return sendLineBotMessage([
@@ -259,19 +329,28 @@ export async function notifyRequestAssigned(request: {
 }
 
 export async function notifyRequestAccepted(request: {
+  id: string;
   requestNumber: string;
   title: string;
   technicianName: string;
+  location?: string;
 }): Promise<boolean> {
+  const fields = [
+    { label: 'เลขที่', value: request.requestNumber },
+    { label: 'ช่าง', value: request.technicianName },
+  ];
+
+  if (request.location) {
+    fields.push({ label: 'สถานที่', value: request.location });
+  }
+
   const flexContent = createFlexBubble(
     '✅ ช่างรับงานแล้ว',
     COLORS.success,
     request.title,
-    [
-      { label: 'เลขที่', value: request.requestNumber },
-      { label: 'ช่าง', value: request.technicianName },
-    ],
-    `FixFlow • ${new Date().toLocaleString('th-TH')}`
+    fields,
+    `FixFlow • ${new Date().toLocaleString('th-TH')}`,
+    getRequestDetailUrl(request.id)
   );
 
   return sendLineBotMessage([
@@ -284,19 +363,28 @@ export async function notifyRequestAccepted(request: {
 }
 
 export async function notifyRequestStarted(request: {
+  id: string;
   requestNumber: string;
   title: string;
   technicianName: string;
+  location?: string;
 }): Promise<boolean> {
+  const fields = [
+    { label: 'เลขที่', value: request.requestNumber },
+    { label: 'ช่าง', value: request.technicianName },
+  ];
+
+  if (request.location) {
+    fields.push({ label: 'สถานที่', value: request.location });
+  }
+
   const flexContent = createFlexBubble(
     '🔧 เริ่มดำเนินการ',
     COLORS.purple,
     request.title,
-    [
-      { label: 'เลขที่', value: request.requestNumber },
-      { label: 'ช่าง', value: request.technicianName },
-    ],
-    `FixFlow • ${new Date().toLocaleString('th-TH')}`
+    fields,
+    `FixFlow • ${new Date().toLocaleString('th-TH')}`,
+    getRequestDetailUrl(request.id)
   );
 
   return sendLineBotMessage([
@@ -309,18 +397,27 @@ export async function notifyRequestStarted(request: {
 }
 
 export async function notifyRequestCompleted(request: {
+  id: string;
   requestNumber: string;
   title: string;
   technicianName: string;
   note?: string;
+  location?: string;
 }): Promise<boolean> {
   const fields = [
     { label: 'เลขที่', value: request.requestNumber },
     { label: 'ดำเนินการโดย', value: request.technicianName },
   ];
 
+  if (request.location) {
+    fields.push({ label: 'สถานที่', value: request.location });
+  }
+
   if (request.note) {
-    fields.push({ label: 'หมายเหตุ', value: request.note });
+    const note = request.note.length > 100
+      ? request.note.substring(0, 100) + '...'
+      : request.note;
+    fields.push({ label: 'หมายเหตุ', value: note });
   }
 
   const flexContent = createFlexBubble(
@@ -328,7 +425,8 @@ export async function notifyRequestCompleted(request: {
     COLORS.success,
     request.title,
     fields,
-    `FixFlow • ${new Date().toLocaleString('th-TH')}`
+    `FixFlow • ${new Date().toLocaleString('th-TH')}`,
+    getRequestDetailUrl(request.id)
   );
 
   return sendLineBotMessage([
@@ -341,6 +439,7 @@ export async function notifyRequestCompleted(request: {
 }
 
 export async function notifyRequestCancelled(request: {
+  id: string;
   requestNumber: string;
   title: string;
   userName: string;
@@ -360,7 +459,8 @@ export async function notifyRequestCancelled(request: {
     COLORS.error,
     request.title,
     fields,
-    `FixFlow • ${new Date().toLocaleString('th-TH')}`
+    `FixFlow • ${new Date().toLocaleString('th-TH')}`,
+    getRequestDetailUrl(request.id)
   );
 
   return sendLineBotMessage([
@@ -373,6 +473,7 @@ export async function notifyRequestCancelled(request: {
 }
 
 export async function notifyRequestRejected(request: {
+  id: string;
   requestNumber: string;
   title: string;
   technicianName: string;
@@ -387,7 +488,8 @@ export async function notifyRequestRejected(request: {
       { label: 'ช่าง', value: request.technicianName },
       { label: 'เหตุผล', value: request.reason },
     ],
-    `FixFlow • ${new Date().toLocaleString('th-TH')}`
+    `FixFlow • ${new Date().toLocaleString('th-TH')}`,
+    getRequestDetailUrl(request.id)
   );
 
   return sendLineBotMessage([
@@ -400,6 +502,7 @@ export async function notifyRequestRejected(request: {
 }
 
 export async function notifyRequestStatusChange(request: {
+  id: string;
   requestNumber: string;
   title: string;
   oldStatus: string;
@@ -445,7 +548,8 @@ export async function notifyRequestStatusChange(request: {
     statusColors[request.newStatus] || COLORS.info,
     request.title,
     fields,
-    `FixFlow • ${new Date().toLocaleString('th-TH')}`
+    `FixFlow • ${new Date().toLocaleString('th-TH')}`,
+    getRequestDetailUrl(request.id)
   );
 
   return sendLineBotMessage([

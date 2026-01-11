@@ -8,40 +8,53 @@ import * as lineBotNotify from './line-bot.service.js';
 
 // Request data types
 interface NewRequestData {
+  id: string;
   requestNumber: string;
   title: string;
+  description?: string;
   category: string;
   location: string;
   priority: string;
   userName: string;
+  userPhone?: string;
 }
 
 interface RequestAssignedData {
+  id: string;
   requestNumber: string;
   title: string;
   technicianName: string;
+  category?: string;
+  location?: string;
 }
 
 interface RequestAcceptedData {
+  id: string;
   requestNumber: string;
   title: string;
   technicianName: string;
+  location?: string;
 }
 
 interface RequestStartedData {
+  id: string;
   requestNumber: string;
   title: string;
   technicianName: string;
+  location?: string;
 }
 
 interface RequestCompletedData {
+  id: string;
   requestNumber: string;
   title: string;
   technicianName: string;
   note?: string;
+  location?: string;
 }
 
 interface RequestCancelledData {
+  id: string;
   requestNumber: string;
   title: string;
   userName: string;
@@ -49,6 +62,7 @@ interface RequestCancelledData {
 }
 
 interface RequestRejectedData {
+  id: string;
   requestNumber: string;
   title: string;
   technicianName: string;
@@ -56,6 +70,7 @@ interface RequestRejectedData {
 }
 
 interface RequestStatusChangeData {
+  id: string;
   requestNumber: string;
   title: string;
   oldStatus: string;

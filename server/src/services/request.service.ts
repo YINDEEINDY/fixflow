@@ -116,12 +116,15 @@ export async function createRequest(input: CreateRequestInput) {
 
   notifyDispatcher
     .notifyNewRequest({
+      id: request.id,
       requestNumber: request.requestNumber,
       title: request.title,
+      description: request.description || undefined,
       category: request.category.nameTh,
       location: locationStr,
       priority: request.priority,
       userName: request.user.name,
+      userPhone: request.user.phone || undefined,
     })
     .catch((err) => console.error('Failed to send notification:', err));
 
@@ -389,6 +392,7 @@ export async function cancelRequest(id: string, userId: string, reason?: string)
   // Send notifications (Discord + LINE Bot)
   notifyDispatcher
     .notifyRequestCancelled({
+      id: updated.id,
       requestNumber: updated.requestNumber,
       title: updated.title,
       userName: updated.user.name,
@@ -466,11 +470,17 @@ export async function assignRequest(
   });
 
   // Send notifications (Discord + LINE Bot)
+  const assignLocation = updated.location;
+  const assignLocationStr = `${assignLocation.building}${assignLocation.floor ? ` ชั้น ${assignLocation.floor}` : ''}${assignLocation.room ? ` ห้อง ${assignLocation.room}` : ''}`;
+
   notifyDispatcher
     .notifyRequestAssigned({
+      id: updated.id,
       requestNumber: request.requestNumber,
       title: request.title,
       technicianName: updated.technician?.user.name || 'ไม่ระบุ',
+      category: updated.category.nameTh,
+      location: assignLocationStr,
     })
     .catch((err) => console.error('Failed to send notification:', err));
 
@@ -543,11 +553,16 @@ export async function acceptRequest(id: string, technicianUserId: string) {
   });
 
   // Send notifications (Discord + LINE Bot)
+  const acceptLocation = updated.location;
+  const acceptLocationStr = `${acceptLocation.building}${acceptLocation.floor ? ` ชั้น ${acceptLocation.floor}` : ''}${acceptLocation.room ? ` ห้อง ${acceptLocation.room}` : ''}`;
+
   notifyDispatcher
     .notifyRequestAccepted({
+      id: updated.id,
       requestNumber: request.requestNumber,
       title: request.title,
       technicianName: request.technician?.user?.name || 'ไม่ระบุ',
+      location: acceptLocationStr,
     })
     .catch((err) => console.error('Failed to send notification:', err));
 
@@ -629,6 +644,7 @@ export async function rejectRequest(id: string, technicianUserId: string, reason
   // Send notifications (Discord + LINE Bot)
   notifyDispatcher
     .notifyRequestRejected({
+      id: updated.id,
       requestNumber: request.requestNumber,
       title: request.title,
       technicianName,
@@ -708,11 +724,16 @@ export async function startRequest(id: string, technicianUserId: string) {
   });
 
   // Send notifications (Discord + LINE Bot)
+  const startLocation = updated.location;
+  const startLocationStr = `${startLocation.building}${startLocation.floor ? ` ชั้น ${startLocation.floor}` : ''}${startLocation.room ? ` ห้อง ${startLocation.room}` : ''}`;
+
   notifyDispatcher
     .notifyRequestStarted({
+      id: updated.id,
       requestNumber: request.requestNumber,
       title: request.title,
       technicianName: request.technician?.user?.name || 'ไม่ระบุ',
+      location: startLocationStr,
     })
     .catch((err) => console.error('Failed to send notification:', err));
 
@@ -791,12 +812,17 @@ export async function completeRequest(id: string, technicianUserId: string, note
   });
 
   // Send notifications (Discord + LINE Bot)
+  const completeLocation = updated.location;
+  const completeLocationStr = `${completeLocation.building}${completeLocation.floor ? ` ชั้น ${completeLocation.floor}` : ''}${completeLocation.room ? ` ห้อง ${completeLocation.room}` : ''}`;
+
   notifyDispatcher
     .notifyRequestCompleted({
+      id: updated.id,
       requestNumber: request.requestNumber,
       title: request.title,
       technicianName: request.technician?.user?.name || 'ไม่ระบุ',
       note,
+      location: completeLocationStr,
     })
     .catch((err) => console.error('Failed to send notification:', err));
 
