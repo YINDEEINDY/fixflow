@@ -31,6 +31,7 @@ export function useSSE() {
   const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reconnectAttemptsRef = useRef(0);
   const maxReconnectAttempts = 5;
+  const connectRef = useRef<() => void>();
 
   const { isAuthenticated } = useAuthStore();
   const token = getAccessToken();
@@ -90,7 +91,7 @@ export function useSSE() {
           console.log(`SSE Reconnecting in ${delay}ms (attempt ${reconnectAttemptsRef.current})`);
 
           reconnectTimeoutRef.current = setTimeout(() => {
-            connect();
+            connectRef.current?.();
           }, delay);
         } else {
           setConnectionError('Unable to connect. Please refresh the page.');
@@ -103,6 +104,11 @@ export function useSSE() {
       setConnectionError('Failed to connect');
     }
   }, [isAuthenticated, token]);
+
+  // Keep connectRef in sync with connect (must be in useEffect to avoid ref access during render)
+  useEffect(() => {
+    connectRef.current = connect;
+  }, [connect]);
 
   const disconnect = useCallback(() => {
     if (reconnectTimeoutRef.current) {
@@ -135,6 +141,7 @@ export function useSSE() {
   // Connect on mount, disconnect on unmount
   useEffect(() => {
     if (isAuthenticated) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       connect();
     }
 
