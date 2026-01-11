@@ -135,10 +135,6 @@ function createFlexBubble(
         uri: actionUrl,
       },
     });
-    footerContents.push({
-      type: 'spacer',
-      size: 'sm',
-    } as FlexComponent);
   }
 
   footerContents.push({
