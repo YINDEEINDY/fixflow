@@ -190,34 +190,24 @@ function AppRoutes() {
   );
 }
 
-const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY || '';
-
-function AppContent() {
-  return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
-  );
-}
+const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY || 'disabled';
 
 export default function App() {
   return (
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
-        {recaptchaSiteKey ? (
-          <GoogleReCaptchaProvider
-            reCaptchaKey={recaptchaSiteKey}
-            scriptProps={{
-              async: true,
-              defer: true,
-              appendTo: 'head',
-            }}
-          >
-            <AppContent />
-          </GoogleReCaptchaProvider>
-        ) : (
-          <AppContent />
-        )}
+        <GoogleReCaptchaProvider
+          reCaptchaKey={recaptchaSiteKey}
+          scriptProps={{
+            async: true,
+            defer: true,
+            appendTo: 'head',
+          }}
+        >
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </GoogleReCaptchaProvider>
       </QueryClientProvider>
     </ThemeProvider>
   );

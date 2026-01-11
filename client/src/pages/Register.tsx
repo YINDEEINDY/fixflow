@@ -4,6 +4,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+
+const isRecaptchaEnabled = Boolean(import.meta.env.VITE_RECAPTCHA_SITE_KEY);
 import { Wrench, Mail, Lock, User, Phone, Building } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -48,7 +50,7 @@ export default function Register() {
 
       try {
         let recaptchaToken: string | undefined;
-        if (executeRecaptcha) {
+        if (isRecaptchaEnabled && executeRecaptcha) {
           recaptchaToken = await executeRecaptcha('register');
         }
         await registerUser(
