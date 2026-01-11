@@ -192,22 +192,32 @@ function AppRoutes() {
 
 const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY || '';
 
+function AppContent() {
+  return (
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
+  );
+}
+
 export default function App() {
   return (
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
-        <GoogleReCaptchaProvider
-          reCaptchaKey={recaptchaSiteKey}
-          scriptProps={{
-            async: true,
-            defer: true,
-            appendTo: 'head',
-          }}
-        >
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
-        </GoogleReCaptchaProvider>
+        {recaptchaSiteKey ? (
+          <GoogleReCaptchaProvider
+            reCaptchaKey={recaptchaSiteKey}
+            scriptProps={{
+              async: true,
+              defer: true,
+              appendTo: 'head',
+            }}
+          >
+            <AppContent />
+          </GoogleReCaptchaProvider>
+        ) : (
+          <AppContent />
+        )}
       </QueryClientProvider>
     </ThemeProvider>
   );
