@@ -13,6 +13,31 @@ import { errorHandler, notFound } from './middlewares/errorHandler.js';
 
 const app = express();
 
+// LINE Webhook - MUST be before any middleware to allow LINE servers
+app.post('/api/line/webhook', express.json(), (req, res) => {
+  console.log('=== LINE Webhook Event ===');
+  console.log(JSON.stringify(req.body, null, 2));
+
+  const events = req.body?.events || [];
+  for (const event of events) {
+    if (event.source?.groupId) {
+      console.log('');
+      console.log('========================================');
+      console.log('🎉 GROUP ID FOUND:', event.source.groupId);
+      console.log('========================================');
+      console.log('');
+    }
+    if (event.source?.roomId) {
+      console.log('ROOM ID FOUND:', event.source.roomId);
+    }
+    if (event.source?.userId) {
+      console.log('USER ID:', event.source.userId);
+    }
+  }
+
+  res.status(200).json({ status: 'ok' });
+});
+
 // Ensure uploads directory exists
 const uploadsDir = path.join(process.cwd(), 'uploads');
 if (!fs.existsSync(uploadsDir)) {
